@@ -11,23 +11,6 @@ const map = new maplibregl.Map({
 });
 
 
-$(document).ready(function () {
-    var bottomPanel = $("#bottom-panel");
-    var initialOffset = bottomPanel.offset().top;
-
-    $(window).scroll(function () {
-        var scrollTop = $(this).scrollTop();
-        var newOffset = initialOffset + scrollTop;
-
-        if (newOffset < 0) {
-            newOffset = 0;
-        }
-
-        bottomPanel.stop().animate({ top: newOffset }, 300, "linear");
-    });
-});
-
-
 // Desactivar la función de inclinación
 map.dragRotate.disable();
 map.touchZoomRotate.disableRotation();
@@ -35,7 +18,7 @@ map.touchZoomRotate.disableRotation();
 // Puedes también ocultar el control de navegación de norte
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }));
 
-map.addControl(new maplibregl.FullscreenControl());
+/* map.addControl(new maplibregl.FullscreenControl()); */
 
 function locateUser() {
     // Obtener la ubicación del usuario
@@ -60,7 +43,7 @@ function locateUser() {
 
 //Esta funcion se usa para id=#flecha.
 function togglePanel() {
-    var panel = document.getElementById("panel");
+    var panel = document.getElementById("contadores-container");
     if (panel.style.display === "none" || panel.style.display === "") {
         panel.style.display = "block";
     } else {
@@ -139,7 +122,7 @@ map.on('moveend', function () {
     const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
   
     // Construye la tabla con la información de todas las geometrías en la vista actual
-    let content = `<h3><i>Listado de proyectos</h3></i>`;
+    let content = `<h4><i>Proyectos</h4></i>`;
   
     features.forEach((feature, index) => {
         const nombre = feature.properties.NOMBRE_SIT;
@@ -163,6 +146,7 @@ map.on('moveend', function () {
   
     // Actualiza el contenido de la caja flotante
     document.getElementById('panel').innerHTML = content;
+    document.getElementById('bottom-panel').innerHTML = content;
 });
 
 // Función para centrar el mapa en la feature seleccionada
@@ -179,9 +163,6 @@ function centrarMapa(index) {
     }
 }
 
-  
-
-
 
 // Función para centrar el mapa en la feature seleccionada
 function centrarMapa(index) {
@@ -196,7 +177,6 @@ function centrarMapa(index) {
         });
     }
 }
-
 
 // Evento de clic en la capa de puntos
 map.on('click', 'proyectos-layer', function (e) {
@@ -3064,6 +3044,7 @@ $(".comunaDropdown").append(
         text: "Seleccionar comuna",
     })
 );
+
 
 $(".regionDropdown").change(function () {
     // Obtiene la región seleccionada
