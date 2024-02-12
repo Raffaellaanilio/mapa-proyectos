@@ -2,10 +2,10 @@ const map = new maplibregl.Map({
     container: "map",
     style:
         "https://api.maptiler.com/maps/basic-v2/style.json?key=LURvXrlYSjugh8dlAFR3",
-    center: [-71.543, -40.6751],
+    center: [-73, -42],
     minZoom: 2, // Establece el zoom máximo permitido
     maxZoom: 18, // Establece el zoom máximo permitido
-    zoom: 3.4,
+    zoom: 6,
     pitch: 0, // Configuración del ángulo de inclinación (establecer en 0 para desactivar la inclinación)
     bearing: 0,
 });
@@ -58,7 +58,7 @@ map.on('load', () => {
     map.addSource('proyectos-source', {
         type: 'geojson',
         cluster: false,
-        data: 'https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3ACatastro_Sitios_Memoria&outputFormat=application%2Fjson',
+        data: 'https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3APuntos_Final&outputFormat=application%2Fjson',
     });
 
     // Intenta cargar la imagen directamente
@@ -96,12 +96,9 @@ map.on('load', () => {
     });
 
     // Actualizar el contenido del elemento con id 'nacional'
-    document.getElementById('nacional').innerHTML = `<center>Total Nacional <br><b>1023 proyectos</b></center>`;
+    document.getElementById('nacional').innerHTML = `<center>Total Nacional <br><b>83 proyectos</b></center>`;
 
 });
-
-
-
     
 /* 
     // Función para obtener el conteo total de features /////////////////////////// NO FUNCIONA
@@ -125,19 +122,35 @@ map.on('moveend', function () {
     let content = `<h4><i>Proyectos</h4></i>`;
   
     features.forEach((feature, index) => {
-        const nombre = feature.properties.NOMBRE_SIT;
-        const tipo = feature.properties.REV_COM;
+        const nombre = feature.properties.Nombre_Pro;
+        const titular = feature.properties.Titular;
+        const tipo = feature.properties.Publico_Pr;
+        const sector = feature.properties.Sector;
         const region = feature.properties.REGION;
         const comuna = feature.properties.COMUNA;
+        const provincia = feature.properties.PROVINCIA;
+        const monto = feature.properties.Monto;
+        const empleosConstruccion = feature.properties.Empleos_Co;
+        const empleosOperacional = feature.properties.Empleos_Op;
+        const estado = feature.properties.Estado;
+        const nudo = feature.properties.nudo_crit;
         const descripcion = feature.properties.DESCRIPCION;
+        const superficie = feature.properties.SUPERFICIE;
+
     
         content += `
             <div class="card ficha" onclick="centrarMapa(${index})">
                 <p style="font-weight:bold;font-size:x-large">${nombre}</p>
-                <p style="color: grey;font-style:italic">Comuna de ${comuna}, región de ${region}</p>
+                <p style="color: grey;font-style:italic">Comuna de ${comuna}, provincia de ${provincia},región de ${region}</p>
                 <p style="color: grey;font-style:italic">${tipo}</p>
-                <p>Monto financiamiento $</p>
-                <p>Descripción</p>
+                <p>Titular: ${titular}</p>
+                <p>Sector: ${sector}</p>
+                <p>Estado: ${estado}</p>
+                <p>Nudo crítico: ${nudo}</p>
+                <p>Monto financiamiento $: ${monto} MM</p>
+                <p>Generación de empleos en etapa de construcción: ${empleosConstruccion}</p>
+                <p>Generación de empleos en etapa operacional: ${empleosOperacional}</p>
+                <p>Superficie en hectáreas: ${superficie}</p>
             </div>
         `;
   
@@ -212,23 +225,13 @@ map.fire('moveend');
 
 // Array de objetos para las opciones de la lista desplegable de la región ////ARREGLAR CODIGOS ******
 var regionOptions = [
-    {
-        value: "15",
-        label: "Arica y Parinacota",
-        center: [-70.3026, -18.4783],
-        zoom: 8,
-    },
+    {  value: "15",label: "Arica y Parinacota", center: [-70.3026, -18.4783],   zoom: 8, },
     { value: "01", label: "Tarapacá", center: [-69.3269, -19.9239], zoom: 7 },
     { value: "02", label: "Antofagasta", center: [-68.9554, -23.4226], zoom: 7 },
     { value: "03", label: "Atacama", center: [-70.9834, -27.4975], zoom: 7 },
     { value: "04", label: "Coquimbo", center: [-71.3375, -29.9711], zoom: 7 },
     { value: "05", label: "Valparaíso", center: [-71.6251, -32.7781], zoom: 8 },
-    {
-        value: "13",
-        label: "Metropolitana",
-        center: [-70.6058, -33.4378],
-        zoom: 8,
-    },
+    { value: "13", label: "Metropolitana", center: [-70.6058, -33.4378],zoom: 8,},
     { value: "06", label: "OHiggins", center: [-70.7152, -34.6354], zoom: 8 },
     { value: "07", label: "Maule", center: [-71.5744, -35.6654], zoom: 8 },
     { value: "16", label: "Ñuble", center: [-71.5374, -36.4966], zoom: 8 },
@@ -3118,13 +3121,11 @@ $(".regionDropdown").change(function () {
     // Filtra y cuenta las features según la región seleccionada
     const conteoRegion = map.queryRenderedFeatures({
         layers: ['proyectos-layer'],
-        filter: ['==', 'CUT_REG', parseInt(selectedRegion, 10)],
+        filter: ['==', 'CUT_REG', selectedRegion.toString()],
     }).length;
 
     // Actualiza el contenido del div con los resultados
     document.getElementById('regional').innerHTML = `<center>Región de ${selectedOption.label} <br> <b>${conteoRegion} proyectos</b></center>`;
-
-
 });
 
 
@@ -3144,7 +3145,7 @@ $(".comunaDropdown").change(function () {
      // Filtra y cuenta las features según la región seleccionada
      const conteoComuna = map.queryRenderedFeatures({
         layers: ['proyectos-layer'],
-        filter: ['==', 'CUT_COM', parseInt(selectedComuna, 10)],
+        filter: ['==', 'CUT_COM', selectedComuna.toString()],
     }).length;
 
     // Actualiza el contenido del div con los resultados
