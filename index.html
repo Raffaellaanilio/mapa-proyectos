@@ -6,9 +6,11 @@
     <meta charset='utf-8'>
     <meta name="viewport"
         content="width=device-width, initial-scale=1 maximum-scale=1, user-scalable=no, viewport-fit=cover">
-        <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
-        <link href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css" rel="stylesheet"   />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400">
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab:300,400">
     <link rel="stylesheet" href="/styles.css">
 </head>
 
@@ -20,7 +22,10 @@
                 <div id="flecha" class="col-2 col-md-1 toggle-button" onclick="togglePanel()">
                     <img viewBox="0 0 ancho alto" style="width: 5vh;" id="toggleIcon" src="images/info.svg">
                 </div>
-                <div class="col-2 col-md-2">
+                <div class="col-2 col-md-1">
+                    <img id="logo" src="images/gobierno.png">
+                </div>
+                <div class="col-2 col-md-1">
                     <img id="logo" src="images/IDE-Chile-MBN2.png">
                 </div>
 
@@ -70,35 +75,38 @@
             </div>
         </div>
     </header>
- 
-    <div class="container-fluid p-0 m-0">
-        <div class="row col-12 m-0">
-            <div id="panel-container" class="col-6 col-md-4 d-none d-md-block">
-                <div id="panel">
-                    <!-- Contenido del panel -->
+
+    <div class="bloque">
+        <div class="container-fluid col-12 p-0 m-0">
+            <div class="row">
+                <!-- Caja 1 -->
+                <div class="col-3 col-md-3 d-none d-md-block">
+                    <div id="panel-container">
+                        <div id="panel"></div>
+                    </div>
                 </div>
-            </div>
-    
-            <div id="map" class="col-6 col-md-8 p-0">
-                <div id="contadores-container">
-                    <p style="font-weight: bold;text-align: center;font-size: large;">Estadísticas de proyectos</p>
-                    <div class="contador" id="nacional">Nacional</div>
-                    <div class="contador" id="regional">Regional</div>
-                    <div class="contador" id="comunal">Comunal</div>
-                    <div class="contador" id="extent">Vista actual</div>
+                <!-- Caja 2 -->
+                <div class="col-6 col-md-6 col-sm-6 p-0 m-0">
+                    <div id="map"></div>
+                    <div id="bottom-panel" class="d-block d-md-none">Proyectos en vista actual</div>
                 </div>
-                <div id="bottom-panel" class="d-block d-md-none">Mobile version</div>
+                                
+                <!-- Caja 3 -->
+                <div class="col-12 col-md-3 col-sm-6 p-0 m-0">
+                    <div id="estadisticas">
+                        <h4><i>Estadísticas</h4></i>
+                        <div class="card contador" id="extent">Vista actual</div>
+                        <div class="card contador" id="nacional">Nacional</div>
+                        <div class="card contador d-none d-md-block" id="regional">Seleccionar una región para obtener su información</div>
+                        <div class="card contador d-none d-md-block" id="comunal">Seleccionar una comuna para obtener su información</div>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>
-    
-    
-    
-    
-    
 
-
-</div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/scripts.js"></script>
