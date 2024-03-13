@@ -3317,7 +3317,7 @@ $(".regionDropdown").change(function () {
     document.getElementById('regional').innerHTML = `
     <div class="container-fluid estadisticas">
     <div class="row">
-    <p class="col-12 text-center mb-1"><b>${selectedOption.label}</b></p>
+    <p class="col-12 text-center mb-1"><b>Región de ${selectedOption.label}</b></p>
             <div class="col-12">  
       <div class="row">
       <div class="col-sm-4 m-0 p-0">
