@@ -160,12 +160,8 @@ map.on('load', () => {
                     ;
 
 
-
-
-
                 // Actualizar contador al mover el mapa
                 map.on('moveend', function () {
-
 
                     //SUMAR POR POR RENDERIZADOS FILTRANDO POR CODIGO DE REGION SELECCIONADA: 
                     const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
@@ -174,7 +170,6 @@ map.on('load', () => {
 
                     //SUMAR PLATA
                     let sumaMonto = 0;
-
 
                     // Iterar sobre las características y sumar los montos
                     features.forEach(function (feature) {
@@ -389,8 +384,8 @@ var regionOptions = [
     { value: "16", label: "Ñuble", center: [-71.5374, -36.4966], zoom: 8 },
     { value: "08", label: "Biobío", center: [-72.2426, -37.4468], zoom: 8 },
     { value: "09", label: "La Araucanía", center: [-71.9996, -38.9489], zoom: 8 },
-    { value: "14", label: "Los Ríos", center: [-72.1652, -39.6465], zoom: 8 },
-    { value: "10", label: "Los Lagos", center: [-72.3147, -41.7492], zoom: 8 },
+    { value: "14", label: "Los Ríos", center: [-72.1652, -39.6465], zoom: 6 },
+    { value: "10", label: "Los Lagos", center: [-73, -41.7492], zoom: 7 },
     { value: "11", label: "Aysén", center: [-73.2475, -45.9751], zoom: 6 },
     { value: "12", label: "Magallanes", center: [-73.0802, -52.8191], zoom: 6 },
 ];
@@ -3099,7 +3094,7 @@ var comunaOptions = [
         region: "Los Lagos",
         label: "Calbuco",
         center: [-73.1316, -41.7683],
-        zoom: 10,
+        zoom: 9,
     },
     {
         cut_reg: "10",
@@ -3167,6 +3162,7 @@ var comunaOptions = [
     },
 ];
 
+
 // Ordena el listado por la propiedad "label"
 comunaOptions.sort(function (a, b) {
     var labelA = a.label.toUpperCase();
@@ -3191,14 +3187,6 @@ regionOptions.forEach(function (option) {
         })
     );
 });
-
-// Agrega la opción predeterminada "Seleccionar comuna"
-$(".comunaDropdown").append(
-    $("<option>", {
-        value: "",
-        text: "Seleccionar comuna",
-    })
-);
 
 
 $(".regionDropdown").change(function () {
@@ -3241,229 +3229,182 @@ function fillCommunesDropdown(selectedRegion) {
 
 
 
-// Actualiza el filtro del mapa y la extensión al cambiar la selección en la lista desplegable de la región
 $(".regionDropdown").change(function () {
     var selectedRegion = $(this).val();
     var selectedOption = regionOptions.find(
         (option) => option.value === selectedRegion
     );
+    console.log(selectedRegion, selectedRegion)
+
+    // Centra el mapa en la región seleccionada y espera a que la animación termine
+    map.once('moveend', function () {
+
+        //SUMAR POR POR RENDERIZADOS FILTRANDO POR CODIGO DE REGION SELECCIONADA: 
+        const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
+
+        // CONTAR PROYECTOS DE LA REGIÓN SELECCIONADA
+        let totalProyectosRegion = 0;
+
+        // Iterar sobre las características y contar los proyectos de la región seleccionada
+        features.forEach(function (feature) {
+            // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
+            if (feature.properties && feature.properties.Join_Cou_1 && feature.properties.CUT_REG === selectedRegion) {
+                // Incrementar el contador de proyectos de la región seleccionada
+                totalProyectosRegion += parseFloat(feature.properties.Join_Cou_1);
+            }
+        });
+
+        // SUMAR MONTOS DE PROYECTOS DE LA REGIÓN SELECCIONADA
+        let sumaMontoRegion = 0;
+
+        // Iterar sobre las características y sumar los montos de los proyectos de la región seleccionada
+        features.forEach(function (feature) {
+            // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
+            if (feature.properties && feature.properties.Monto && feature.properties.CUT_REG === selectedRegion) {
+                // Obtener el monto de la característica y sumarlo
+                sumaMontoRegion += parseFloat(feature.properties.Monto);
+            }
+        });
+
+        // SUMAR EMPLEOS DE LA REGIÓN SELECCIONADA
+        let sumaEmpleosRegion = 0;
+
+        // Iterar sobre las características y sumar los empleos de los proyectos de la región seleccionada
+        features.forEach(function (feature) {
+            // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
+            if (feature.properties && feature.properties.Empleos_Op && feature.properties.CUT_REG === selectedRegion) {
+                // Obtener la cantidad de empleos de la característica y sumarlos
+                sumaEmpleosRegion += parseFloat(feature.properties.Empleos_Op);
+            }
+        });
+
+        // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
+        const sumaMontoRegionFormateada = sumaMontoRegion.toLocaleString('es-ES');
+
+        // Actualiza el contenido del div con los resultados REGIONALES
+        document.getElementById('regional').innerHTML = `
+        <div class="container-fluid estadisticas">
+            <div class="row">
+                <p class="col-12 text-center mb-1"><b>Región de ${selectedOption.label}</b></p>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-sm-4 m-0 p-0">
+                            <div class="card m-0 p-0 text-center">
+                                <p class="mb-2">Proyectos</p>
+                                <img src="images/proyecto.svg" alt="proyecto" style="max-width: 40%; margin: auto;" class="mb-3">
+                                <p>${totalProyectosRegion}</p>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4 m-0 p-0">
+                            <div class="card m-0 p-0 text-center">
+                                <p class="mb-2">Inversión</p>
+                                <img src="images/inversion.svg" alt="inversion" style="max-width: 40%; margin: auto;" class="mb-3">
+                                <p>${sumaMontoRegionFormateada} MM</p>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4 m-0 p-0">
+                            <div class="card m-0 p-0 text-center">
+                                <p class="mb-2">Empleos</p>
+                                <img src="images/empleo.svg" alt="empleo" style="max-width: 40%; margin: auto;" class="mb-3">
+                                <p>${sumaEmpleosRegion}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    });
 
     // Centra el mapa en la región seleccionada
     map.flyTo({
         center: selectedOption.center,
         zoom: selectedOption.zoom,
     });
-
-
-    //SUMAR POR POR RENDERIZADOS FILTRANDO POR CODIGO DE REGION SELECCIONADA: 
-    const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
-
-    // CONTAR PROYECTOS REGION
-    let totalProyectosRegion = 0;
-
-    // Iterar sobre las características y contar los proyectos de la región seleccionada
-    features.forEach(function (feature) {
-        // Verificar si la característica tiene la propiedad 'CUT_REG'
-        if (feature.properties && feature.properties.CUT_REG) {
-            // Verificar si el valor de 'CUT_REG' coincide con la región seleccionada
-            if (feature.properties.CUT_REG === selectedRegion) {
-                // Incrementar el contador de proyectos de la región seleccionada
-                totalProyectosRegion++;
-            }
-        }
-    });
-
-    // Mostrar la cantidad total de proyectos de la región seleccionada
-    console.log('Total de proyectos en la región seleccionada:', totalProyectosRegion);
-
-
-    // SUMAR PLATA REGION
-    let sumaMontoRegion = 0;
-
-    // Iterar sobre las características y sumar los montos
-    features.forEach(function (feature) {
-        // Verificar si la característica tiene la propiedad 'Monto'
-        // y si el valor de la columna CUT_REG coincide con selectedRegion
-        if (feature.properties && feature.properties.Monto && feature.properties.CUT_REG === selectedRegion) {
-            // Obtener el monto de la característica y sumarlo
-            sumaMontoRegion += parseFloat(feature.properties.Monto);
-        }
-    });
-
-    // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
-    const sumaMontoRegionFormateada = sumaMontoRegion.toLocaleString('es-ES');
-
-    // Mostrar la suma de montos formateada
-    console.log('Suma de Montos:', sumaMontoRegionFormateada);
-
-    // SUMAR EMPLEOS REGION
-    let sumaEmpleosRegion = 0;
-
-    // Iterar sobre las características y sumar los montos
-    features.forEach(function (feature) {
-        // Verificar si la característica tiene la propiedad 'Monto'
-        // y si el valor de la columna CUT_REG coincide con selectedRegion
-        if (feature.properties && feature.properties.Monto && feature.properties.CUT_REG === selectedRegion) {
-            // Obtener el monto de la característica y sumarlo
-            sumaEmpleosRegion += parseFloat(feature.properties.Empleos_Op);
-        }
-    });
-
-    // Mostrar la suma de montos
-    console.log('Suma de Empleos:', sumaEmpleosRegion);
-
-
-    // Actualiza el contenido del div con los resultados REGIONALES
-    document.getElementById('regional').innerHTML = `
-    <div class="container-fluid estadisticas">
-    <div class="row">
-    <p class="col-12 text-center mb-1"><b>Región de ${selectedOption.label}</b></p>
-            <div class="col-12">  
-      <div class="row">
-      <div class="col-sm-4 m-0 p-0">
-      <div class="card m-0 p-0 text-center">
-      <p class="mb-2">Proyectos</p>
-      <img src="images/proyecto.svg" alt="proyecto" style="max-width: 40%; margin: auto;" class="mb-3">
-      <p  class="mb-0">${totalProyectosRegion}</p>
-            </div>
-          </div>
-
-        <div class="col-sm-4 m-0 p-0">
-        <div class="card m-0 p-0 text-center">
-            <p class="mb-2">Inversión</p>
-            <img src="images/inversion.svg" alt="inversion" style="max-width: 40%; margin: auto;" class="mb-3">
-              <p  class="mb-0">${sumaMontoRegionFormateada} MM</p>
-            </div>
-          </div>
-
-        <div class="col-sm-4 m-0 p-0">
-        <div class="card m-0 p-0 text-center">
-            <p class="mb-2">Empleos</p>
-            <img src="images/empleo.svg" alt="empleo" style="max-width: 40%; margin: auto;" class="mb-3">
-              <p  class="mb-0">${sumaEmpleosRegion}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-
-    
-    `;
 });
 
 
-// Actualiza el filtro del mapa y la extensión al cambiar la selección en la lista desplegable de la comuna
+
+
+// Agrega la opción predeterminada "Seleccionar comuna"
+$(".comunaDropdown").append(
+    $("<option>", {
+        value: "",
+        text: "Seleccionar comuna",
+    })
+);
+
+// Evento que se activa al cambiar la selección en la lista desplegable de la comuna
 $(".comunaDropdown").change(function () {
     var selectedComuna = $(this).val();
     var selectedOption = comunaOptions.find(
         (option) => option.value === selectedComuna
     );
 
+    // Centra el mapa en la comuna seleccionada y espera a que la animación termine
+    map.once('moveend', function () {
+
+        // Realiza el conteo de proyectos, sumas de monto y empleos
+        let totalProyectosComuna = 0;
+        let sumaMontoComuna = 0;
+        let sumaEmpleosComuna = 0;
+        const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
+        features.forEach(function (feature) {
+            if (feature.properties && feature.properties.Join_Cou_1 && feature.properties.CUT_COM === selectedComuna) {
+                totalProyectosComuna += parseFloat(feature.properties.Join_Cou_1);
+                sumaMontoComuna += parseFloat(feature.properties.Monto);
+                sumaEmpleosComuna += parseFloat(feature.properties.Empleos_Op);
+            }
+        });
+
+        // Actualiza el contenido del div con los resultados
+        document.getElementById('comunal').innerHTML = `
+        <div class="container-fluid estadisticas">
+            <div class="row">
+                <p class="col-12 text-center mb-1"><b>Comuna de ${selectedOption.label}</b></p>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-sm-4 m-0 p-0">
+                            <div class="card m-0 p-0 text-center">
+                                <p class="mb-2">Proyectos</p>
+                                <img src="images/proyecto.svg" alt="proyecto" style="max-width: 40%; margin: auto;" class="mb-3">
+                                <p>${totalProyectosComuna}</p>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4 m-0 p-0">
+                            <div class="card m-0 p-0 text-center">
+                                <p class="mb-2">Inversión</p>
+                                <img src="images/inversion.svg" alt="inversion" style="max-width: 40%; margin: auto;" class="mb-3">
+                                <p>${sumaMontoComuna.toLocaleString('es-ES')} MM</p>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4 m-0 p-0">
+                            <div class="card m-0 p-0 text-center">
+                                <p class="mb-2">Empleos</p>
+                                <img src="images/empleo.svg" alt="empleo" style="max-width: 40%; margin: auto;" class="mb-3">
+                                <p>${sumaEmpleosComuna}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        // Actualiza el número total de proyectos en la opción "Seleccionar comuna" del dropdown
+        $(".comunaDropdown option[value='']").text("Seleccionar comuna (" + totalProyectosComuna + " proyectos)");
+    });
+
     // Centra el mapa en la comuna seleccionada
     map.flyTo({
         center: selectedOption.center,
         zoom: selectedOption.zoom,
     });
-
-
-    //SUMAR POR POR RENDERIZADOS FILTRANDO POR CODIGO DE REGION SELECCIONADA: 
-    const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
-
-    // CONTAR PROYECTOS REGION
-    let totalProyectosComuna = 0;
-
-    // Iterar sobre las características y contar los proyectos de la región seleccionada
-    features.forEach(function (feature) {
-        // Verificar si la característica tiene la propiedad 'CUT_REG'
-        if (feature.properties && feature.properties.CUT_COM) {
-            // Verificar si el valor de 'CUT_REG' coincide con la región seleccionada
-            if (feature.properties.CUT_COM === selectedComuna) {
-                // Incrementar el contador de proyectos de la región seleccionada
-                totalProyectosComuna++;
-            }
-        }
-    });
-
-    // Mostrar la suma de montos
-    console.log('Suma de Montos:', totalProyectosComuna);
-
-
-
-    // SUMAR PLATA REGION
-    let sumaMontoComuna = 0;
-
-    // Iterar sobre las características y sumar los montos
-    features.forEach(function (feature) {
-        // Verificar si la característica tiene la propiedad 'Monto'
-        // y si el valor de la columna CUT_REG coincide con selectedRegion
-        if (feature.properties && feature.properties.Monto && feature.properties.CUT_COM === selectedComuna) {
-            // Obtener el monto de la característica y sumarlo
-            sumaMontoComuna += parseFloat(feature.properties.Monto);
-        }
-    });
-
-    const sumaMontoComunaFormateada = sumaMontoComuna.toLocaleString('es-ES')
-    // Mostrar la suma de montos
-    console.log('Suma de Montos:', sumaMontoComunaFormateada);
-
-    // SUMAR EMPLEOS REGION
-    let sumaEmpleosComuna = 0;
-
-    // Iterar sobre las características y sumar los montos
-    features.forEach(function (feature) {
-        // Verificar si la característica tiene la propiedad 'Monto'
-        // y si el valor de la columna CUT_REG coincide con selectedRegion
-        if (feature.properties && feature.properties.Monto && feature.properties.CUT_COM === selectedComuna) {
-            // Obtener el monto de la característica y sumarlo
-            sumaEmpleosComuna += parseFloat(feature.properties.Empleos_Op);
-        }
-    });
-
-    // Mostrar la suma de montos
-    console.log('Suma de Empleos:', sumaEmpleosComuna);
-
-    // Actualiza el contenido del div con los resultados
-    document.getElementById('comunal').innerHTML = `
-    <div class="container-fluid estadisticas">
-    <div class="row">
-    <p class="col-12 text-center mb-1"><b>Comuna de ${selectedOption.label}</b></p>
-    <div class="col-12">
-    <div class="row">
-        <div class="col-sm-4 m-0 p-0">
-            <div class="card m-0 p-0 text-center">
-                <p class="mb-2">Proyectos</p>
-                <img src="images/proyecto.svg" alt="proyecto" style="max-width: 40%; margin: auto;" class="mb-3">
-              <p>${totalProyectosComuna}</p>
-            </div>
-          </div>
-
-          <div class="col-sm-4 m-0 p-0">
-          <div class="card m-0 p-0 text-center">
-              <p class="mb-2">Inversión</p>
-              <img src="images/inversion.svg" alt="inversion" style="max-width: 40%; margin: auto;" class="mb-3">
-              <p>${sumaMontoComunaFormateada} MM</p>
-            </div>
-          </div>
-
-          <div class="col-sm-4 m-0 p-0">
-          <div class="card m-0 p-0 text-center">
-              <p class="mb-2">Empleos</p>
-              <img src="images/empleo.svg" alt="empleo" style="max-width: 40%; margin: auto;" class="mb-3">
-              <p>${sumaEmpleosComuna}</p>
-            </div>
- 
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-   
-
-`;
-
 });
+
+
 
 map.on("error", function (e) {
     console.error("Error:", e.error);
