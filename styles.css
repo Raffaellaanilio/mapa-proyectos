@@ -157,7 +157,6 @@ p {
 }
 
 .contador {
-  display: inline-block;
   padding: 1%;
   margin: 1%;
   font-size: 0.8rem;

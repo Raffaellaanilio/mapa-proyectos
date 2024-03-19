@@ -199,7 +199,7 @@ map.on('load', () => {
                     document.getElementById('extent').innerHTML = `
                     <div class="container-fluid estadisticas">
                     <div class="row">
-                    <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Datos vista actual</p>
+                    <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Vista actual</p>
                         <div class="col-12">
                             <div class="row">
                                 <div class="col-sm-4 m-0 p-0">
