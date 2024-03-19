@@ -126,39 +126,33 @@ map.on('load', () => {
                 document.getElementById('nacional').innerHTML = `
                          <div class="container-fluid estadisticas">
                          <div class="row">
-                         <p class="col-12 text-center mb-1"><b>Total Nacional</b></p>
-                           
+                         <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Total Nacional</p>                           
                            <div class="col-12">  
                              <div class="row">
                              <div class="col-sm-4 m-0 p-0">
                              <div class="card m-0 p-0 text-center">
-                             <p class="mb-2">Proyectos</p>
-                             <img src="images/proyecto.svg" alt="proyecto" style="max-width: 40%; margin: auto;" class="mb-3">
-                             <p class="mb-0">83</p>
+                             <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
+                             <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">83</p>
                                  </div>
                                </div>
                                <div class="col-sm-4 m-0 p-0">
                                <div class="card m-0 p-0 text-center">
-                               <p class="mb-2">Inversión</p>
-                               <img src="images/inversion.svg" alt="inversion" style="max-width: 40%; margin: auto;" class="mb-3">
-                               <p>1.259.203.465 MM   </p>
+                               <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
+                               <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">1.259.203.465 MM   </p>
                                  </div>
                                </div>
                                <div class="col-sm-4 m-0 p-0">
                                <div class="card m-0 p-0 text-center">
-                               <p class="mb-2">Empleos</p>
-                               <img src="images/empleo.svg" alt="empleo" style="max-width: 40%; margin: auto;" class="mb-3">
-                               <p>1830</p>
+                               <p style="font-size:1rem;font-weight:bold;color:#006FB3" class="mb-2">Empleos</p>
+                               <p style="font-size:2rem;font-weight:bold;color:#006FB3"class="mb-0">1830</p>
                                    </div>
                                  </div>
                              </div>
                            </div>
                          </div>
-                       </div>
-                                 
+                       </div>                                 
                          `
                     ;
-
 
                 // Actualizar contador al mover el mapa
                 map.on('moveend', function () {
@@ -186,74 +180,57 @@ map.on('load', () => {
                     // Mostrar la suma de montos formateada
                     console.log('Suma de Montos:', sumaMontoFormateada);
 
-                    //SUMAR EMPLEOS
+                    // SUMAR EMPLEOS
                     let sumaEmpleosConstruccion = 0;
 
-                    // Iterar sobre las características y sumar los montos
+                    // Iterar sobre las características y sumar los empleos
                     features.forEach(function (feature) {
-                        // Verificar si la característica tiene la propiedad 'Monto'
-                        if (feature.properties && feature.properties.Empleos_Co) {
-                            // Obtener el monto de la característica y sumarlo
-                            sumaEmpleosConstruccion += parseFloat(feature.properties.Empleos_Co);
+                        // Verificar si la característica tiene las propiedades 'Empleos_Op' y 'Empleos_Co'
+                        if (feature.properties && feature.properties.Empleos_Op && feature.properties.Empleos_Co) {
+                            // Obtener los empleos de la característica y sumarlos
+                            sumaEmpleosConstruccion += parseFloat(feature.properties.Empleos_Op) + parseFloat(feature.properties.Empleos_Co);
                         }
                     });
 
-
-
                     // Mostrar la suma de montos
                     console.log('Suma de Montos:', sumaEmpleosConstruccion);
-
 
                     // Actualizar el contenido del div con el contador
                     document.getElementById('extent').innerHTML = `
                     <div class="container-fluid estadisticas">
                     <div class="row">
-                        <p class="col-12 text-center mb-1"><b>Datos vista actual</b></p>
+                    <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Datos vista actual</p>
                         <div class="col-12">
                             <div class="row">
                                 <div class="col-sm-4 m-0 p-0">
                                     <div class="card m-0 p-0 text-center">
-                                        <p class="mb-2">Proyectos</p>
-                                        <img src="images/proyecto.svg" alt="proyecto" style="max-width: 40%; margin: auto;" class="mb-3">
-                                        <p class="mb-0">${vistaActual}</p>
+                                    <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
+                                    <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">${vistaActual}</p>                                                         
                                     </div>
                                 </div>
 
                                 <div class="col-sm-4 m-0 p-0">
                                     <div class="card m-0 p-0 text-center">
-                                        <p class="mb-2">Inversión</p>
-                                        <img src="images/inversion.svg" alt="inversion" style="max-width: 40%; margin: auto;" class="mb-3">
-                                        <p class="mb-0">${sumaMontoFormateada} MM</p>
+                                    <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
+                                    <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoFormateada} MM</p>
                                     </div>
                                 </div>
 
                                 <div class="col-sm-4 m-0 p-0">
                                     <div class="card m-0 p-0 text-center">
-                                        <p class="mb-2">Empleos</p>
-                                        <img src="images/empleo.svg" alt="empleo" style="max-width: 40%; margin: auto;" class="mb-3">
-                                        <p class="mb-0">${sumaEmpleosConstruccion}</p>
+                                    <p style="font-size:1rem;font-weight:bold;color:#006FB3" class="mb-2">Empleos</p>
+                                <p style="font-size:2rem;font-weight:bold;color:#006FB3"class="mb-0">${sumaEmpleosConstruccion}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-     
-        
+                </div>                    
         `;
-
-
-
 
                 });
 
-
-
-
-
             });
-
 
             // Evento de clic en la capa de puntos
             map.on('click', 'proyectos-layer', function (e) {
@@ -277,7 +254,6 @@ map.on('load', () => {
                 map.getCanvas().style.cursor = '';
             });
 
-
             // Función para centrar el mapa en la feature seleccionada
             function centrarMapa(index) {
                 const feature = map.querySourceFeatures('proyectos-source')[index];
@@ -291,11 +267,6 @@ map.on('load', () => {
                     });
                 }
             }
-
-
-
-
-
         })
         .catch(error => {
             console.error('Error al obtener los datos de la fuente WFS:', error);
@@ -308,7 +279,7 @@ map.on('moveend', function () {
     const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
 
     // Construye la tabla con la información de todas las geometrías en la vista actual
-    let content = `<h4><i>Proyectos</h4></i>`;
+    let content = `<h6><i>Proyectos</h6></i>`;
 
     features.forEach((feature, index) => {
         const nombre = feature.properties.Nombre_Pro;
@@ -372,20 +343,20 @@ function centrarMapa(index) {
 
 // Array de objetos para las opciones de la lista desplegable de la región ////ARREGLAR CODIGOS ******
 var regionOptions = [
-    { value: "15", label: "Arica y Parinacota", center: [-70.3026, -18.4783], zoom: 8, },
-    { value: "01", label: "Tarapacá", center: [-69.3269, -19.9239], zoom: 7 },
-    { value: "02", label: "Antofagasta", center: [-68.9554, -23.4226], zoom: 7 },
-    { value: "03", label: "Atacama", center: [-70.9834, -27.4975], zoom: 7 },
-    { value: "04", label: "Coquimbo", center: [-71.3375, -29.9711], zoom: 7 },
-    { value: "05", label: "Valparaíso", center: [-71.6251, -32.7781], zoom: 8 },
-    { value: "13", label: "Metropolitana", center: [-70.6058, -33.4378], zoom: 8, },
-    { value: "06", label: "OHiggins", center: [-70.7152, -34.6354], zoom: 8 },
-    { value: "07", label: "Maule", center: [-71.5744, -35.6654], zoom: 8 },
-    { value: "16", label: "Ñuble", center: [-71.5374, -36.4966], zoom: 8 },
-    { value: "08", label: "Biobío", center: [-72.2426, -37.4468], zoom: 8 },
-    { value: "09", label: "La Araucanía", center: [-71.9996, -38.9489], zoom: 8 },
+    { value: "15", label: "Arica y Parinacota", center: [-70.3026, -18.4783], zoom: 6, },
+    { value: "01", label: "Tarapacá", center: [-69.3269, -19.9239], zoom: 6 },
+    { value: "02", label: "Antofagasta", center: [-68.9554, -23.4226], zoom: 6 },
+    { value: "03", label: "Atacama", center: [-70.9834, -27.4975], zoom: 6 },
+    { value: "04", label: "Coquimbo", center: [-71.3375, -29.9711], zoom: 6 },
+    { value: "05", label: "Valparaíso", center: [-71.6251, -32.7781], zoom: 6 },
+    { value: "13", label: "Metropolitana", center: [-70.6058, -33.4378], zoom: 6, },
+    { value: "06", label: "OHiggins", center: [-70.7152, -34.6354], zoom: 6 },
+    { value: "07", label: "Maule", center: [-71.5744, -35.6654], zoom: 6 },
+    { value: "16", label: "Ñuble", center: [-71.5374, -36.4966], zoom: 6 },
+    { value: "08", label: "Biobío", center: [-72.2426, -37.4468], zoom: 6 },
+    { value: "09", label: "La Araucanía", center: [-71.9996, -38.9489], zoom: 6 },
     { value: "14", label: "Los Ríos", center: [-72.1652, -39.6465], zoom: 6 },
-    { value: "10", label: "Los Lagos", center: [-73, -41.7492], zoom: 7 },
+    { value: "10", label: "Los Lagos", center: [-73, -41.7492], zoom: 6 },
     { value: "11", label: "Aysén", center: [-73.2475, -45.9751], zoom: 6 },
     { value: "12", label: "Magallanes", center: [-73.0802, -52.8191], zoom: 6 },
 ];
@@ -3272,11 +3243,14 @@ $(".regionDropdown").change(function () {
         // Iterar sobre las características y sumar los empleos de los proyectos de la región seleccionada
         features.forEach(function (feature) {
             // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
-            if (feature.properties && feature.properties.Empleos_Op && feature.properties.CUT_REG === selectedRegion) {
+            if (feature.properties && feature.properties.Empleos_Op && feature.properties.Empleos_Co && feature.properties.CUT_REG === selectedRegion) {
                 // Obtener la cantidad de empleos de la característica y sumarlos
-                sumaEmpleosRegion += parseFloat(feature.properties.Empleos_Op);
+                sumaEmpleosRegion += parseFloat(feature.properties.Empleos_Op) + parseFloat(feature.properties.Empleos_Co);
             }
         });
+
+
+    
 
         // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
         const sumaMontoRegionFormateada = sumaMontoRegion.toLocaleString('es-ES');
@@ -3285,30 +3259,27 @@ $(".regionDropdown").change(function () {
         document.getElementById('regional').innerHTML = `
         <div class="container-fluid estadisticas">
             <div class="row">
-                <p class="col-12 text-center mb-1"><b>Región de ${selectedOption.label}</b></p>
+            <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Región de ${selectedOption.label}</p>
                 <div class="col-12">
                     <div class="row">
                         <div class="col-sm-4 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
-                                <p class="mb-2">Proyectos</p>
-                                <img src="images/proyecto.svg" alt="proyecto" style="max-width: 40%; margin: auto;" class="mb-3">
-                                <p>${totalProyectosRegion}</p>
+                            <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
+                            <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">${totalProyectosRegion}</p>
                             </div>
                         </div>
 
                         <div class="col-sm-4 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
-                                <p class="mb-2">Inversión</p>
-                                <img src="images/inversion.svg" alt="inversion" style="max-width: 40%; margin: auto;" class="mb-3">
-                                <p>${sumaMontoRegionFormateada} MM</p>
+                            <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>                               
+                                <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoRegionFormateada} MM</p>
                             </div>
                         </div>
 
                         <div class="col-sm-4 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
-                                <p class="mb-2">Empleos</p>
-                                <img src="images/empleo.svg" alt="empleo" style="max-width: 40%; margin: auto;" class="mb-3">
-                                <p>${sumaEmpleosRegion}</p>
+                            <p style="font-size:1rem;font-weight:bold;color:#006FB3" class="mb-2">Empleos</p>
+                            <p style="font-size:2rem;font-weight:bold;color:#006FB3"class="mb-0">${sumaEmpleosRegion}</p>
                             </div>
                         </div>
                     </div>
@@ -3323,8 +3294,6 @@ $(".regionDropdown").change(function () {
         zoom: selectedOption.zoom,
     });
 });
-
-
 
 
 // Agrega la opción predeterminada "Seleccionar comuna"
@@ -3362,30 +3331,27 @@ $(".comunaDropdown").change(function () {
         document.getElementById('comunal').innerHTML = `
         <div class="container-fluid estadisticas">
             <div class="row">
-                <p class="col-12 text-center mb-1"><b>Comuna de ${selectedOption.label}</b></p>
+            <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Comuna de ${selectedOption.label}</p>
                 <div class="col-12">
                     <div class="row">
                         <div class="col-sm-4 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
-                                <p class="mb-2">Proyectos</p>
-                                <img src="images/proyecto.svg" alt="proyecto" style="max-width: 40%; margin: auto;" class="mb-3">
-                                <p>${totalProyectosComuna}</p>
+                            <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
+                            <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">${totalProyectosComuna}</p>
                             </div>
                         </div>
 
                         <div class="col-sm-4 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
-                                <p class="mb-2">Inversión</p>
-                                <img src="images/inversion.svg" alt="inversion" style="max-width: 40%; margin: auto;" class="mb-3">
-                                <p>${sumaMontoComuna.toLocaleString('es-ES')} MM</p>
+                            <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
+                            <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoComuna.toLocaleString('es-ES')} MM</p>
                             </div>
                         </div>
 
                         <div class="col-sm-4 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
-                                <p class="mb-2">Empleos</p>
-                                <img src="images/empleo.svg" alt="empleo" style="max-width: 40%; margin: auto;" class="mb-3">
-                                <p>${sumaEmpleosComuna}</p>
+                            <p style="font-size:1rem;font-weight:bold;color:#006FB3" class="mb-2">Empleos</p>
+                            <p style="font-size:2rem;font-weight:bold;color:#006FB3"class="mb-0">${sumaEmpleosComuna}</p>
                             </div>
                         </div>
                     </div>
