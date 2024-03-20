@@ -135,6 +135,7 @@ map.on('load', () => {
                              <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">83</p>
                                  </div>
                                </div>
+                               
                                <div class="col-sm-4 m-0 p-0">
                                <div class="card m-0 p-0 text-center">
                                <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
@@ -175,7 +176,7 @@ map.on('load', () => {
                     });
 
                     // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
-                    const sumaMontoFormateada = sumaMonto.toLocaleString('es-ES');
+                    const sumaMontoFormateada = sumaMonto.toLocaleString('es-ES', { maximumFractionDigits: 0 });
 
                     // Mostrar la suma de montos formateada
                     console.log('Suma de Montos:', sumaMontoFormateada);
@@ -3253,7 +3254,7 @@ $(".regionDropdown").change(function () {
     
 
         // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
-        const sumaMontoRegionFormateada = sumaMontoRegion.toLocaleString('es-ES');
+        const sumaMontoRegionFormateada = sumaMontoRegion.toLocaleString('es-ES', { maximumFractionDigits: 0 });
 
         // Actualiza el contenido del div con los resultados REGIONALES
         document.getElementById('regional').innerHTML = `
@@ -3344,7 +3345,7 @@ $(".comunaDropdown").change(function () {
                         <div class="col-sm-4 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
                             <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
-                            <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoComuna.toLocaleString('es-ES')} MM</p>
+                            <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoComuna.toLocaleString('es-ES', { maximumFractionDigits: 0 })} MM</p>
                             </div>
                         </div>
 

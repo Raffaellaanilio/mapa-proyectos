@@ -45,17 +45,21 @@ header {
 
 #panel {
   max-height: 100%;
-  width: 100%;
+  width: fit-content;
   height: 90vh;
   background-color: white;
-  padding: 1px;
-  margin-left: 5%;
+  padding: 0px;
+  margin-left: 3%;
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 5000;
   border-radius: 1%;
   opacity: 90%;
+}
+
+#panel-container{
+  width: 100%;
 }
 
 #estadisticas {
