@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <header class="card bg-light p-2 text-center">
+    <header style="background-color:#0A132D;" class="card p-1 text-center">
         <div class="container-fluid">
             <div class="row justify-content-end align-items-center">
 
@@ -23,13 +23,13 @@
                     <img viewBox="0 0 ancho alto" style="width: 5vh;" id="toggleIcon" src="images/info.svg">
                 </div>
                 <div class="col-2 col-md-1">
-                    <img id="logo" src="images/gobierno.png">
+                    <img class="logo" src="images/logo-gob-header-blanco.svg">
                 </div>
                 <div class="col-2 col-md-1">
-                    <img id="logo" src="images/IDE-Chile-MBN2.png">
+                    <img class="logo" src="images/logo-ide-blanco.svg">
                 </div>
 
-                <div id="titulo" class="col-5 col-md-4">
+                <div id="titulo" class="col-12 col-md-4">
                     Mapa de Proyectos
                 </div>
 
@@ -38,7 +38,7 @@
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
                         aria-label="Toggle navigation">
-                        <span><img style="width: 2.5vh;margin: 0.5vh;" src="images/menu.svg"></span>
+                        <span><img style="width: 1.5rem;margin-right: 0.5rem;" src="images/menu.svg">Buscar</span>
                     </button>
                 </div>
 
@@ -51,8 +51,8 @@
                 </div>
                 <!-- Botón de ubicación -->
                 <div class="card col-6 col-md-1" id="locate-button" onclick="locateUser()">
-                    <span><img style="width: 2.5vh;margin: 0.5vh;" src="images/locate.svg"></span>
-                    <h6 style="font-size: small;" class="d-none d-md-block">Tu ubicación</h6>
+                    <span><img style="width: 1.1rem;margin-right: 0.5rem;" src="images/locate.svg">Tu ubicación</span>
+                    <h6 style="font-size: small;" class="d-none d-md-block"></h6>
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
             <div class="row">
                 <!-- Caja 1 -->
                 <div class="col-3 col-md-3 p-0 m-0 d-none d-md-block">
-                    <div id="panel-container">
+                    <div style="margin-left: 1rem;" id="panel-container">
                         <div id="panel"></div>
                     </div>
                 </div>
