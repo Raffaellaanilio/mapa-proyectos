@@ -10,7 +10,44 @@ const map = new maplibregl.Map({
     bearing: 0,
 });
 
+function locateUser() {
+    var defaultLocation = [-70.669265, -33.448333]; // Ejemplo para Santiago, Chile
 
+    // Retorna una promesa para la ubicación del usuario
+    return new Promise(function(resolve, reject) {
+        // Obtener la ubicación del usuario
+        navigator.geolocation.getCurrentPosition(function (position) {
+            // Asigna los valores a las variables globales
+            userLatitude = position.coords.latitude;
+            userLongitude = position.coords.longitude;
+            userLocation = [userLongitude, userLatitude]; // Almacena la ubicación del usuario en la variable global
+
+            // Centrar el mapa en la ubicación del usuario
+            map.setCenter(userLocation);
+            map.setZoom(10); // Ajusta el nivel de zoom según tus necesidades
+
+            // Añadir un marcador en la ubicación del usuario
+            new maplibregl.Marker()
+                .setLngLat(userLocation)
+                .addTo(map);
+
+            // Resolver la promesa con la ubicación del usuario
+            resolve(userLocation);
+        }, function (error) {
+            // Manejar la denegación de geolocalización
+            console.log('Ubicación denegada. Usando ubicación predeterminada.');
+            
+            // Centrar el mapa en la ubicación predeterminada
+            map.setCenter(defaultLocation);
+            map.setZoom(10); // Ajusta el nivel de zoom según tus necesidades
+                // Habilitar la interacción del mapa
+      map.setInteractive(true);
+            
+            // Resolver la promesa con la ubicación predeterminada
+            resolve(defaultLocation);
+        });
+    });
+}
 
 // Desactivar la función de inclinación
 map.dragRotate.disable();
@@ -88,13 +125,31 @@ map.on('load', () => {
                     layout: {
                         'icon-image': 'circle-15',
                         'icon-allow-overlap': true,
+                        'text-allow-overlap': false,
+                        'text-optional': true,
                         'icon-size': 1,
-                        /*            'text-field': ['get', 'NOMBRE_SIT'],
-                                     'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-                                     'text-size': 12,
-                                     'text-anchor': 'top',
-                                     'text-allow-overlap': false,  */
-
+                        'text-field': ['get', 'Nombre_Pro'],
+                        'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                        'text-radial-offset': 0.5,
+                        'text-justify': 'auto',       
+                        "text-size": {
+                            "stops": [
+                                // Zoom level 0 and below: text size 0 (hidden)
+                                [0, 0],
+                                // Zoom level 3 and below: text size 0 (hidden)
+                                [4, 0],                              
+                                [6, 0],
+                                [8, 0],  
+                                [9, 0],          
+                                [10, 12],
+                                [12, 14],                             
+                              ]
+                        }
+                    },
+                    paint: {
+                        'text-color': 'black', // Color del texto
+                        'text-halo-color': 'white', // Color del buffer blanco
+                        'text-halo-width': 2, // Ancho del buffer                       
                     },
                 })
 
@@ -228,22 +283,7 @@ map.on('load', () => {
             // Restaura el cursor al salir de las features
             map.on('mouseleave', 'proyectos-layer', function () {
                 map.getCanvas().style.cursor = '';
-            });
-
-            // Función para centrar el mapa en la feature seleccionada
-            function centrarMapa(index) {
-                const feature = map.querySourceFeatures('proyectos-source')[index];
-
-                if (feature) {
-                    const coordinates = feature.geometry.coordinates;
-                    // Centra el mapa en las coordenadas de la feature seleccionada
-                    map.flyTo({
-                        center: coordinates,
-                        zoom: 14, // Puedes ajustar el nivel de zoom según tus necesidades
-                        speed: 2
-                    });
-                }
-            }
+            });           
         })
         .catch(error => {
             console.error('Error al obtener los datos de la fuente WFS:', error);
@@ -260,6 +300,7 @@ map.on('idle', function () {
 
     features.forEach((feature, index) => {
 
+        const featureId = feature.properties.Identifica; // Extrae el ID de la característica
         const nombre = feature.properties.Nombre_Pro;
         const titular = feature.properties.Titular;
         const tipo = feature.properties.Publico_Pr;
@@ -279,7 +320,7 @@ map.on('idle', function () {
         const isFirstElement = index === 0;
 
         content += `
-            <div class="card ficha${isFirstElement ? ' first-element' : ''}" onclick="centrarMapa(${index})">
+            <div class="card ficha${isFirstElement ? ' first-element' : ''}" onclick="centrarMapa('${featureId}')">
                 <p class="nombre">${nombre}</p>
                 <p class="ubicacion">Comuna de ${comuna}, provincia de ${provincia}, región de ${region}</p>
                 <p><span class="etiqueta">Tipo:</span> ${tipo}</p>
@@ -301,18 +342,25 @@ map.on('idle', function () {
 });
 
 
-// Función para centrar el mapa en la feature seleccionada
-function centrarMapa(index) {
-    const feature = map.querySourceFeatures('proyectos-source')[index];
+// Función para centrar el mapa en la feature seleccionada por su ID
+function centrarMapa(featureId) {
+    console.log('Feature ID a buscar:', featureId); // Verifica si el ID de la característica se pasa correctamente
 
-    if (feature) {
-        const coordinates = feature.geometry.coordinates;
+    var features = map.querySourceFeatures('proyectos-source', {
+        filter: ['==', 'Identifica', featureId]
+    });
+    console.log('Características encontradas:', features); // Verifica las características encontradas
+
+    if (features.length > 0) {
+        var coordinates = features[0].geometry.coordinates;
         // Centra el mapa en las coordenadas de la feature seleccionada
         map.flyTo({
             center: coordinates,
             zoom: 17, // Puedes ajustar el nivel de zoom según tus necesidades
             speed: 4
         });
+    } else {
+        console.log('No se encontraron características con el ID proporcionado.');
     }
 }
 
