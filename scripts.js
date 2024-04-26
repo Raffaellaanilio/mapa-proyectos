@@ -128,7 +128,11 @@ map.on('load', () => {
                         'text-allow-overlap': false,
                         'text-optional': true,
                         'icon-size': 1,
-                        'text-field': ['get', 'Nombre_Pro'],
+                        'text-field': [
+                            'coalesce', // Utiliza coalesce para obtener el primer valor no nulo
+                            ['get', 'NOMBRE_PRO'], // Intenta obtener el valor de 'Nombre_Pro'
+                            ['get', 'NOMBRE_INI'] // Si 'Nombre_Pro' está vacío, intenta obtener el valor de 'Otro_Campo'
+                        ],
                         'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                         'text-radial-offset': 0.5,
                         'text-justify': 'auto',       
@@ -164,14 +168,14 @@ map.on('load', () => {
                              <div class="col-sm-6 m-0 p-0">
                              <div class="card m-0 p-0 text-center">
                              <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
-                             <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">83</p>
+                             <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">152</p>
                                  </div>
                                </div>
                                
                                <div class="col-sm-6 m-0 p-0">
                                <div class="card m-0 p-0 text-center">
                                <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
-                               <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">1.259.203.465 MM   </p>
+                               <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">1.431.494.917 MM</p>
                                  </div>
                                </div>
                            
@@ -290,7 +294,7 @@ map.on('idle', function () {
 
     features.forEach((feature, index) => {
 
-        const featureId = feature.properties.CODIGO_BIP; // Extrae el ID de la característica
+        const featureId = feature.properties.ID; // Extrae el ID de la característica
         const nombre = feature.properties.NOMBRE_DE_ || feature.properties.NOMBRE_PRO ;
         const titular = feature.properties.TITULAR;
         const tipo = feature.properties.PUBLICO_PR;
@@ -350,17 +354,16 @@ function centrarMapa(featureId) {
     console.log('Feature ID a buscar:', featureId); // Verifica si el ID de la característica se pasa correctamente
 
     var features = map.querySourceFeatures('proyectos-source', {
-        filter: ['==', 'Identifica', featureId]
+        filter: ['==', 'ID', featureId]
     });
     console.log('Características encontradas:', features); // Verifica las características encontradas
 
     if (features.length > 0) {
         var coordinates = features[0].geometry.coordinates;
         // Centra el mapa en las coordenadas de la feature seleccionada
-        map.flyTo({
+        map.jumpTo({
             center: coordinates,
             zoom: 17, // Puedes ajustar el nivel de zoom según tus necesidades
-            speed: 4
         });
     } else {
         console.log('No se encontraron características con el ID proporcionado.');
