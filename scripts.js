@@ -2,10 +2,10 @@ const map = new maplibregl.Map({
     container: "map",
     style:
         "https://api.maptiler.com/maps/basic-v2/style.json?key=LURvXrlYSjugh8dlAFR3",
-    center: [-73, -42],
+    center: [-73, -40],
     minZoom: 2, // Establece el zoom máximo permitido
     maxZoom: 18, // Establece el zoom máximo permitido
-    zoom: 6,
+    zoom: 3,
     pitch: 0, // Configuración del ángulo de inclinación (establecer en 0 para desactivar la inclinación)
     bearing: 0,
 });
@@ -93,7 +93,7 @@ map.on('load', () => {
 
 
     // Realizar la solicitud fetch para obtener los datos de la fuente WFS
-    fetch('https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3APuntos_Final&outputFormat=application%2Fjson')
+    fetch('https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3Alayer_puntosproyectos_20240426113322&outputFormat=application%2Fjson')
         .then(response => response.json())
         .then(data => {
             // Agregar la fuente de datos GeoJSON al mapa con los datos obtenidos
@@ -161,25 +161,20 @@ map.on('load', () => {
                          <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Total Nacional</p>                           
                            <div class="col-12">  
                              <div class="row">
-                             <div class="col-sm-4 m-0 p-0">
+                             <div class="col-sm-6 m-0 p-0">
                              <div class="card m-0 p-0 text-center">
                              <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
                              <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">83</p>
                                  </div>
                                </div>
                                
-                               <div class="col-sm-4 m-0 p-0">
+                               <div class="col-sm-6 m-0 p-0">
                                <div class="card m-0 p-0 text-center">
                                <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
                                <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">1.259.203.465 MM   </p>
                                  </div>
                                </div>
-                               <div class="col-sm-4 m-0 p-0">
-                               <div class="card m-0 p-0 text-center">
-                               <p style="font-size:1rem;font-weight:bold;color:#006FB3" class="mb-2">Empleos</p>
-                               <p style="font-size:2rem;font-weight:bold;color:#006FB3"class="mb-0">1830</p>
-                                   </div>
-                                 </div>
+                           
                              </div>
                            </div>
                          </div>
@@ -200,9 +195,9 @@ map.on('load', () => {
                     // Iterar sobre las características y sumar los montos
                     features.forEach(function (feature) {
                         // Verificar si la característica tiene la propiedad 'Monto'
-                        if (feature.properties && feature.properties.Monto) {
+                        if (feature.properties && feature.properties.MONTO) {
                             // Obtener el monto de la característica y sumarlo
-                            sumaMonto += parseFloat(feature.properties.Monto);
+                            sumaMonto += parseFloat(feature.properties.MONTO);
                         }
                     });
 
@@ -234,26 +229,21 @@ map.on('load', () => {
                     <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Vista actual</p>
                         <div class="col-12">
                             <div class="row">
-                                <div class="col-sm-4 m-0 p-0">
+                                <div class="col-sm-6 m-0 p-0">
                                     <div class="card m-0 p-0 text-center">
                                     <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
                                     <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">${vistaActual}</p>                                                         
                                     </div>
                                 </div>
 
-                                <div class="col-sm-4 m-0 p-0">
+                                <div class="col-sm-6 m-0 p-0">
                                     <div class="card m-0 p-0 text-center">
                                     <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
                                     <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoFormateada} MM</p>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-4 m-0 p-0">
-                                    <div class="card m-0 p-0 text-center">
-                                    <p style="font-size:1rem;font-weight:bold;color:#006FB3" class="mb-2">Empleos</p>
-                                <p style="font-size:2rem;font-weight:bold;color:#006FB3"class="mb-0">${sumaEmpleosConstruccion}</p>
-                                    </div>
-                                </div>
+                             
                             </div>
                         </div>
                     </div>
@@ -300,41 +290,54 @@ map.on('idle', function () {
 
     features.forEach((feature, index) => {
 
-        const featureId = feature.properties.Identifica; // Extrae el ID de la característica
-        const nombre = feature.properties.Nombre_Pro;
-        const titular = feature.properties.Titular;
-        const tipo = feature.properties.Publico_Pr;
-        const sector = feature.properties.Sector;
+        const featureId = feature.properties.CODIGO_BIP; // Extrae el ID de la característica
+        const nombre = feature.properties.NOMBRE_DE_ || feature.properties.NOMBRE_PRO ;
+        const titular = feature.properties.TITULAR;
+        const tipo = feature.properties.PUBLICO_PR;
+        const sector = feature.properties.SECTOR;
         const region = feature.properties.REGION;
         const comuna = feature.properties.COMUNA;
         const provincia = feature.properties.PROVINCIA;
-        const monto = feature.properties.Monto;
-        const empleosConstruccion = feature.properties.Empleos_Co;
-        const empleosOperacional = feature.properties.Empleos_Op;
-        const estado = feature.properties.Estado;
-        const nudo = feature.properties.nudo_crit;
+        const monto = feature.properties.MONTO || feature.properties.MONTO_2024 ;
+/*      const empleosConstruccion = feature.properties.Empleos_Co;
+        const empleosOperacional = feature.properties.Empleos_Op; */
+        const estado = feature.properties.ESTADO;
+        const nudo = feature.properties.NUDO_CRIT;
         const descripcion = feature.properties.DESCRIPCION;
         const superficie = feature.properties.SUPERFICIE;
+        const formuladora = feature.properties.UNIDAD_FOR;
+        const finalizadora = feature.properties.UNIDAD_FIN;
+        const tecnica = feature.properties.unidad_te;
 
+        
+    // Verificar si hay suficiente información para agregar la tarjeta
+    if (nombre || titular || tipo || sector || region || comuna || provincia || monto || estado || nudo || superficie || formuladora || finalizadora || tecnica) {
         // Determinar si este es el primer elemento en la iteración
         const isFirstElement = index === 0;
 
-        content += `
+        // Construir el contenido de la tarjeta
+        let cardContent = `
             <div class="card ficha${isFirstElement ? ' first-element' : ''}" onclick="centrarMapa('${featureId}')">
-                <p class="nombre">${nombre}</p>
-                <p class="ubicacion">Comuna de ${comuna}, provincia de ${provincia}, región de ${region}</p>
-                <p><span class="etiqueta">Tipo:</span> ${tipo}</p>
-                <p><span class="etiqueta">Titular:</span> ${titular}</p>
-                <p><span class="etiqueta">Sector:</span> ${sector}</p>
-                <p><span class="etiqueta">Estado:</span> ${estado}</p>
-                <p><span class="etiqueta">Nudo crítico:</span> ${nudo}</p>
-                <p><span class="etiqueta">Monto financiamiento $:</span> ${monto} MM</p>
-                <p><span class="etiqueta">Generación de empleos en etapa de construcción:</span> ${empleosConstruccion}</p>
-                <p><span class="etiqueta">Generación de empleos en etapa operacional:</span> ${empleosOperacional}</p>
-                <p><span class="etiqueta">Superficie en hectáreas:</span> ${superficie}</p>
+                ${nombre ? `<p class="nombre">${nombre}</p>` : ''}
+                ${comuna && provincia && region ? `<p class="ubicacion">Comuna de ${comuna}, provincia de ${provincia}, región de ${region}</p>` : ''}
+                ${tipo ? `<p><span class="etiqueta">Tipo:</span> ${tipo}</p>` : ''}
+                ${titular ? `<p><span class="etiqueta">Titular:</span> ${titular}</p>` : ''}
+                ${sector ? `<p><span class="etiqueta">Sector:</span> ${sector}</p>` : ''}
+                ${formuladora ? `<p><span class="etiqueta">Unidad Formuladora:</span> ${formuladora}</p>` : ''}
+                ${finalizadora ? `<p><span class="etiqueta">Unidad Finalizadora:</span> ${finalizadora}</p>` : ''}
+                ${tecnica ? `<p><span class="etiqueta">Unidad Técnica:</span> ${tecnica}</p>` : ''}
+                ${estado ? `<p><span class="etiqueta">Estado:</span> ${estado}</p>` : ''}
+                ${nudo ? `<p><span class="etiqueta">Nudo crítico:</span> ${nudo}</p>` : ''}
+                ${monto ? `<p><span class="etiqueta">Monto financiamiento $:</span> ${monto} MM</p>` : ''}
+                ${superficie ? `<p><span class="etiqueta">Superficie en hectáreas:</span> ${superficie}</p>` : ''}
+                <p><span style="font-size:1.5vh;float:right"class="etiqueta"><i>Última fecha de actualización: Marzo 2024</i></span></p>
             </div>
         `;
-    });
+
+        // Agregar la tarjeta al contenido
+        content += cardContent;
+    }
+});
 
     // Actualiza el contenido de la caja flotante
     document.getElementById('panel').innerHTML = content;
@@ -3229,7 +3232,7 @@ $(".regionDropdown").change(function () {
     console.log(selectedRegion, selectedRegion)
 
     // Centra el mapa en la región seleccionada y espera a que la animación termine
-    map.once('moveend', function () {
+    map.once('idle', function () {
 
         //SUMAR POR POR RENDERIZADOS FILTRANDO POR CODIGO DE REGION SELECCIONADA: 
         const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
@@ -3240,9 +3243,9 @@ $(".regionDropdown").change(function () {
         // Iterar sobre las características y contar los proyectos de la región seleccionada
         features.forEach(function (feature) {
             // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
-            if (feature.properties && feature.properties.Join_Cou_1 && feature.properties.CUT_REG === selectedRegion) {
+            if (feature.properties && feature.properties.JOIN_COUNT && feature.properties.CUT_REG === selectedRegion) {
                 // Incrementar el contador de proyectos de la región seleccionada
-                totalProyectosRegion += parseFloat(feature.properties.Join_Cou_1);
+                totalProyectosRegion += parseFloat(feature.properties.JOIN_COUNT);
             }
         });
 
@@ -3252,9 +3255,9 @@ $(".regionDropdown").change(function () {
         // Iterar sobre las características y sumar los montos de los proyectos de la región seleccionada
         features.forEach(function (feature) {
             // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
-            if (feature.properties && feature.properties.Monto && feature.properties.CUT_REG === selectedRegion) {
+            if (feature.properties && feature.properties.MONTO && feature.properties.CUT_REG === selectedRegion) {
                 // Obtener el monto de la característica y sumarlo
-                sumaMontoRegion += parseFloat(feature.properties.Monto);
+                sumaMontoRegion += parseFloat(feature.properties.MONTO);
             }
         });
 
@@ -3281,26 +3284,20 @@ $(".regionDropdown").change(function () {
             <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Región de ${selectedOption.label}</p>
                 <div class="col-12">
                     <div class="row">
-                        <div class="col-sm-4 m-0 p-0">
+                        <div class="col-sm-6 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
                             <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
                             <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">${totalProyectosRegion}</p>
                             </div>
                         </div>
 
-                        <div class="col-sm-4 m-0 p-0">
+                        <div class="col-sm-6 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
                             <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>                               
                                 <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoRegionFormateada} MM</p>
                             </div>
                         </div>
 
-                        <div class="col-sm-4 m-0 p-0">
-                            <div class="card m-0 p-0 text-center">
-                            <p style="font-size:1rem;font-weight:bold;color:#006FB3" class="mb-2">Empleos</p>
-                            <p style="font-size:2rem;font-weight:bold;color:#006FB3"class="mb-0">${sumaEmpleosRegion}</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -3332,7 +3329,7 @@ $(".comunaDropdown").change(function () {
     );
 
     // Centra el mapa en la comuna seleccionada y espera a que la animación termine
-    map.once('moveend', function () {
+    map.once('idle', function () {
 
         // Realiza el conteo de proyectos, sumas de monto y empleos
         let totalProyectosComuna = 0;
@@ -3340,9 +3337,9 @@ $(".comunaDropdown").change(function () {
         let sumaEmpleosComuna = 0;
         const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
         features.forEach(function (feature) {
-            if (feature.properties && feature.properties.Join_Cou_1 && feature.properties.CUT_COM === selectedComuna) {
-                totalProyectosComuna += parseFloat(feature.properties.Join_Cou_1);
-                sumaMontoComuna += parseFloat(feature.properties.Monto);
+            if (feature.properties && feature.properties.JOIN_COUNT && feature.properties.CUT_COM === selectedComuna) {
+                totalProyectosComuna += parseFloat(feature.properties.JOIN_COUNT);
+                sumaMontoComuna += parseFloat(feature.properties.MONTO);
                 sumaEmpleosComuna += parseFloat(feature.properties.Empleos_Op);
             }
         });
@@ -3354,26 +3351,21 @@ $(".comunaDropdown").change(function () {
             <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Comuna de ${selectedOption.label}</p>
                 <div class="col-12">
                     <div class="row">
-                        <div class="col-sm-4 m-0 p-0">
+                        <div class="col-sm-6 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
                             <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
                             <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">${totalProyectosComuna}</p>
                             </div>
                         </div>
 
-                        <div class="col-sm-4 m-0 p-0">
+                        <div class="col-sm-6 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
                             <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
                             <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoComuna.toLocaleString('es-ES', { maximumFractionDigits: 0 })} MM</p>
                             </div>
                         </div>
 
-                        <div class="col-sm-4 m-0 p-0">
-                            <div class="card m-0 p-0 text-center">
-                            <p style="font-size:1rem;font-weight:bold;color:#006FB3" class="mb-2">Empleos</p>
-                            <p style="font-size:2rem;font-weight:bold;color:#006FB3"class="mb-0">${sumaEmpleosComuna}</p>
-                            </div>
-                        </div>
+                     
                     </div>
                 </div>
             </div>
