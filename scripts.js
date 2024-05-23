@@ -288,6 +288,7 @@ map.on('idle', function () {
     // Obtén las features en la vista actual
     const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
 
+  
     // Construye la tabla con la información de todas las geometrías en la vista actual
     let content = `<h6><i>Proyectos <b>(${features.length})</b></h6></i>
     `;
@@ -312,6 +313,42 @@ map.on('idle', function () {
         const formuladora = feature.properties.UNIDAD_FOR;
         const finalizadora = feature.properties.UNIDAD_FIN;
         const tecnica = feature.properties.unidad_te;
+
+        
+    // Llenar el dropdown con los nombres de los proyectos
+    features.forEach(nombreProyecto => {
+        $(".nombreProyectoDropdown").append(
+          $("<option>", {
+            value: option.nombre, // Utilizar nombre_proyecto como valor
+            text: nombreProyecto.nombre, // Utilizar nombre_proyecto como texto
+          })
+        );
+      });
+      features.forEach(nombreProyecto => {
+        $(".nombreProyectoDropdown").append(
+          $("<option>", {
+            value: option.nombre, // Utilizar nombre_proyecto como valor
+            text: nombreProyecto.nombre, // Utilizar nombre_proyecto como texto
+          })
+        );
+      });
+  
+  
+      // Evento que se activa al cambiar la selección en la lista desplegable del proyecto
+      $(".nombreProyectoDropdown").change(function () {
+        const selectedProjectName = $(this).val();
+        const selectedProject = nombreProyecto.find(
+            nombreProyecto => nombreProyecto.nombre === selectedProjectName
+        );
+  
+        if (selectedProject) {
+          // Centrar el mapa en la ubicación del proyecto seleccionado
+          map.flyTo({
+            center: selectedProject.coordenadas,
+            zoom: 14 // Ajusta el nivel de zoom según sea necesario
+          });
+        }
+    });
 
         
     // Verificar si hay suficiente información para agregar la tarjeta
@@ -3174,7 +3211,7 @@ comunaOptions.sort(function (a, b) {
 $(".regionDropdown").append(
     $("<option>", {
         value: "",
-        text: "Seleccionar región",
+        text: "Región",
     })
 );
 
@@ -3211,7 +3248,7 @@ function fillCommunesDropdown(selectedRegion) {
     $(".comunaDropdown").append(
         $("<option>", {
             value: "",
-            text: "Seleccionar comuna",
+            text: "Seleccionar Comuna",
         })
     );
 
@@ -3320,7 +3357,7 @@ $(".regionDropdown").change(function () {
 $(".comunaDropdown").append(
     $("<option>", {
         value: "",
-        text: "Seleccionar comuna",
+        text: "Comuna",
     })
 );
 

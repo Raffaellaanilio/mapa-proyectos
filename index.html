@@ -4,10 +4,9 @@
 <head>
     <title>Mapa de Proyectos</title>
     <meta charset='utf-8'>
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1 maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"content="width=device-width, initial-scale=1 maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
-    <link href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css" rel="stylesheet"   />
+    <link href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400">
     <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab:300,400">
@@ -43,11 +42,14 @@
                 </div>
 
                 <!-- Filtros para versión desktop -->
-                <div class="col-1 col-md-2 d-none d-md-block">
+                <div class="col-1 col-md-1 d-none d-md-block">
                     <select class="form-select form-select-sm regionDropdown"></select>
                 </div>
-                <div class="col-1 col-md-2 d-none d-md-block">
+                <div class="col-1 col-md-1 d-none d-md-block">
                     <select class="form-select form-select-sm comunaDropdown"></select>
+                </div>
+                <div class="col-1 col-md-1 d-none d-md-block">
+                    <select class="form-select form-select-sm nombreProyectoDropdown"></select>
                 </div>
                 <!-- Botón de ubicación -->
                 <div class="card col-6 col-md-1" id="locate-button" onclick="locateUser()">
