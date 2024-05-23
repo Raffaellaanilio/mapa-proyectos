@@ -14,7 +14,7 @@ function locateUser() {
     var defaultLocation = [-70.669265, -33.448333]; // Ejemplo para Santiago, Chile
 
     // Retorna una promesa para la ubicación del usuario
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         // Obtener la ubicación del usuario
         navigator.geolocation.getCurrentPosition(function (position) {
             // Asigna los valores a las variables globales
@@ -36,13 +36,13 @@ function locateUser() {
         }, function (error) {
             // Manejar la denegación de geolocalización
             console.log('Ubicación denegada. Usando ubicación predeterminada.');
-            
+
             // Centrar el mapa en la ubicación predeterminada
             map.setCenter(defaultLocation);
             map.setZoom(10); // Ajusta el nivel de zoom según tus necesidades
-                // Habilitar la interacción del mapa
-      map.setInteractive(true);
-            
+            // Habilitar la interacción del mapa
+            map.setInteractive(true);
+
             // Resolver la promesa con la ubicación predeterminada
             resolve(defaultLocation);
         });
@@ -135,19 +135,19 @@ map.on('load', () => {
                         ],
                         'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                         'text-radial-offset': 0.5,
-                        'text-justify': 'auto',       
+                        'text-justify': 'auto',
                         "text-size": {
                             "stops": [
                                 // Zoom level 0 and below: text size 0 (hidden)
                                 [0, 0],
                                 // Zoom level 3 and below: text size 0 (hidden)
-                                [4, 0],                              
+                                [4, 0],
                                 [6, 0],
-                                [8, 0],  
-                                [9, 0],          
+                                [8, 0],
+                                [9, 0],
                                 [10, 12],
-                                [12, 14],                             
-                              ]
+                                [12, 14],
+                            ]
                         }
                     },
                     paint: {
@@ -277,7 +277,7 @@ map.on('load', () => {
             // Restaura el cursor al salir de las features
             map.on('mouseleave', 'proyectos-layer', function () {
                 map.getCanvas().style.cursor = '';
-            });           
+            });
         })
         .catch(error => {
             console.error('Error al obtener los datos de la fuente WFS:', error);
@@ -288,24 +288,112 @@ map.on('idle', function () {
     // Obtén las features en la vista actual
     const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
 
-  
+    // Construye la lista de nombres de proyectos visibles en la vista actual
+    const nombreProyectos = features.map(feature => ({
+        nombre: feature.properties.NOMBRE_DE_ || feature.properties.NOMBRE_PRO,
+        coordenadas: feature.geometry.coordinates
+    }));
+
+    // Llenar el dropdown con los nombres de los proyectos
+    const dropdownProyectos = $(".nombreProyectoDropdown");
+    dropdownProyectos.empty(); // Vaciar el dropdown antes de llenarlo nuevamente
+    dropdownProyectos.append(
+        $("<option>", {
+            value: "",
+            text: "Proyecto",
+        })
+    );
+
+    nombreProyectos.forEach(proyecto => {
+        if (proyecto.nombre) {
+            dropdownProyectos.append(
+                $("<option>", {
+                    value: proyecto.nombre,
+                    text: proyecto.nombre,
+                })
+            );
+        }
+    });
+
+    // Evitar agregar múltiples eventos 'change'
+    dropdownProyectos.off('change'); // Elimina cualquier evento 'change' anterior
+
+    // Evento que se activa al cambiar la selección en la lista desplegable del proyecto
+    dropdownProyectos.on('change', function () {
+        const selectedProjectName = $(this).val();
+        const selectedProject = nombreProyectos.find(
+            proyecto => proyecto.nombre === selectedProjectName
+        );
+
+        if (selectedProject) {
+            // Centrar el mapa en la ubicación del proyecto seleccionado
+            map.flyTo({
+                center: selectedProject.coordenadas,
+                zoom: 14 // Ajusta el nivel de zoom según sea necesario
+            });
+        }
+    });
+
+    // Construye la lista de códigos BIP visibles en la vista actual
+    const codigoBIP = features.map(feature => ({
+        BIP: feature.properties.CODIGO_BIP,
+        coordenadas: feature.geometry.coordinates
+    }));
+
+    // Llenar el dropdown con los códigos BIP de los proyectos
+    const dropdownCodigoBIP = $(".codigoBIPDropdown");
+    dropdownCodigoBIP.empty(); // Vaciar el dropdown antes de llenarlo nuevamente
+    dropdownCodigoBIP.append(
+        $("<option>", {
+            value: "",
+            text: "Código BIP",
+        })
+    );
+
+    codigoBIP.forEach(BIP => {
+        if (BIP.BIP) {
+            dropdownCodigoBIP.append(
+                $("<option>", {
+                    value: BIP.BIP,
+                    text: BIP.BIP,
+                })
+            );
+        }
+    });
+
+    // Evitar agregar múltiples eventos 'change'
+    dropdownCodigoBIP.off('change'); // Elimina cualquier evento 'change' anterior
+
+    // Evento que se activa al cambiar la selección en la lista desplegable del proyecto
+    dropdownCodigoBIP.on('change', function () {
+        const selectedCodigoBIPname = $(this).val();
+        const selectedCodigoBIP = codigoBIP.find(
+            BIP => BIP.BIP === selectedCodigoBIPname
+        );
+
+        if (selectedCodigoBIP) {
+            // Centrar el mapa en la ubicación del proyecto seleccionado
+            map.flyTo({
+                center: selectedCodigoBIP.coordenadas,
+                zoom: 14 // Ajusta el nivel de zoom según sea necesario
+            });
+        }
+    });
+
+
     // Construye la tabla con la información de todas las geometrías en la vista actual
-    let content = `<h6><i>Proyectos <b>(${features.length})</b></h6></i>
-    `;
+    let content = `<h6><i>Proyectos <b>(${features.length})</b></h6></i>`;
 
     features.forEach((feature, index) => {
-
         const featureId = feature.properties.ID; // Extrae el ID de la característica
-        const nombre = feature.properties.NOMBRE_DE_ || feature.properties.NOMBRE_PRO ;
+        const nombre = feature.properties.NOMBRE_DE_ || feature.properties.NOMBRE_PRO;
         const titular = feature.properties.TITULAR;
         const tipo = feature.properties.PUBLICO_PR;
         const sector = feature.properties.SECTOR;
         const region = feature.properties.REGION;
         const comuna = feature.properties.COMUNA;
         const provincia = feature.properties.PROVINCIA;
-        const monto = feature.properties.MONTO || feature.properties.MONTO_2024 ;
-/*      const empleosConstruccion = feature.properties.Empleos_Co;
-        const empleosOperacional = feature.properties.Empleos_Op; */
+        const monto = feature.properties.MONTO || feature.properties.MONTO_2024;
         const estado = feature.properties.ESTADO;
         const nudo = feature.properties.NUDO_CRIT;
         const descripcion = feature.properties.DESCRIPCION;
@@ -314,71 +402,34 @@ map.on('idle', function () {
         const finalizadora = feature.properties.UNIDAD_FIN;
         const tecnica = feature.properties.unidad_te;
 
-        
-    // Llenar el dropdown con los nombres de los proyectos
-    features.forEach(nombreProyecto => {
-        $(".nombreProyectoDropdown").append(
-          $("<option>", {
-            value: option.nombre, // Utilizar nombre_proyecto como valor
-            text: nombreProyecto.nombre, // Utilizar nombre_proyecto como texto
-          })
-        );
-      });
-      features.forEach(nombreProyecto => {
-        $(".nombreProyectoDropdown").append(
-          $("<option>", {
-            value: option.nombre, // Utilizar nombre_proyecto como valor
-            text: nombreProyecto.nombre, // Utilizar nombre_proyecto como texto
-          })
-        );
-      });
-  
-  
-      // Evento que se activa al cambiar la selección en la lista desplegable del proyecto
-      $(".nombreProyectoDropdown").change(function () {
-        const selectedProjectName = $(this).val();
-        const selectedProject = nombreProyecto.find(
-            nombreProyecto => nombreProyecto.nombre === selectedProjectName
-        );
-  
-        if (selectedProject) {
-          // Centrar el mapa en la ubicación del proyecto seleccionado
-          map.flyTo({
-            center: selectedProject.coordenadas,
-            zoom: 14 // Ajusta el nivel de zoom según sea necesario
-          });
+        // Verificar si hay suficiente información para agregar la tarjeta
+        if (nombre || titular || tipo || sector || region || comuna || provincia || monto || estado || nudo || superficie || formuladora || finalizadora || tecnica) {
+            // Determinar si este es el primer elemento en la iteración
+            const isFirstElement = index === 0;
+
+            // Construir el contenido de la tarjeta
+            let cardContent = `
+                <div class="card ficha${isFirstElement ? ' first-element' : ''}" onclick="centrarMapa('${featureId}')">
+                    ${nombre ? `<p class="nombre">${nombre}</p>` : ''}
+                    ${comuna && provincia && region ? `<p class="ubicacion">Comuna de ${comuna}, provincia de ${provincia}, región de ${region}</p>` : ''}
+                    ${tipo ? `<p><span class="etiqueta">Tipo:</span> ${tipo}</p>` : ''}
+                    ${titular ? `<p><span class="etiqueta">Titular:</span> ${titular}</p>` : ''}
+                    ${sector ? `<p><span class="etiqueta">Sector:</span> ${sector}</p>` : ''}
+                    ${formuladora ? `<p><span class="etiqueta">Unidad Formuladora:</span> ${formuladora}</p>` : ''}
+                    ${finalizadora ? `<p><span class="etiqueta">Unidad Finalizadora:</span> ${finalizadora}</p>` : ''}
+                    ${tecnica ? `<p><span class="etiqueta">Unidad Técnica:</span> ${tecnica}</p>` : ''}
+                    ${estado ? `<p><span class="etiqueta">Estado:</span> ${estado}</p>` : ''}
+                    ${nudo ? `<p><span class="etiqueta">Nudo crítico:</span> ${nudo}</p>` : ''}
+                    ${monto ? `<p><span class="etiqueta">Monto financiamiento $:</span> ${monto} MM</p>` : ''}
+                    ${superficie ? `<p><span class="etiqueta">Superficie en hectáreas:</span> ${superficie}</p>` : ''}
+                    <p><span style="font-size:1.5vh;float:right"class="etiqueta"><i>Última fecha de actualización: Marzo 2024</i></span></p>
+                </div>
+            `;
+
+            // Agregar la tarjeta al contenido
+            content += cardContent;
         }
     });
-
-        
-    // Verificar si hay suficiente información para agregar la tarjeta
-    if (nombre || titular || tipo || sector || region || comuna || provincia || monto || estado || nudo || superficie || formuladora || finalizadora || tecnica) {
-        // Determinar si este es el primer elemento en la iteración
-        const isFirstElement = index === 0;
-
-        // Construir el contenido de la tarjeta
-        let cardContent = `
-            <div class="card ficha${isFirstElement ? ' first-element' : ''}" onclick="centrarMapa('${featureId}')">
-                ${nombre ? `<p class="nombre">${nombre}</p>` : ''}
-                ${comuna && provincia && region ? `<p class="ubicacion">Comuna de ${comuna}, provincia de ${provincia}, región de ${region}</p>` : ''}
-                ${tipo ? `<p><span class="etiqueta">Tipo:</span> ${tipo}</p>` : ''}
-                ${titular ? `<p><span class="etiqueta">Titular:</span> ${titular}</p>` : ''}
-                ${sector ? `<p><span class="etiqueta">Sector:</span> ${sector}</p>` : ''}
-                ${formuladora ? `<p><span class="etiqueta">Unidad Formuladora:</span> ${formuladora}</p>` : ''}
-                ${finalizadora ? `<p><span class="etiqueta">Unidad Finalizadora:</span> ${finalizadora}</p>` : ''}
-                ${tecnica ? `<p><span class="etiqueta">Unidad Técnica:</span> ${tecnica}</p>` : ''}
-                ${estado ? `<p><span class="etiqueta">Estado:</span> ${estado}</p>` : ''}
-                ${nudo ? `<p><span class="etiqueta">Nudo crítico:</span> ${nudo}</p>` : ''}
-                ${monto ? `<p><span class="etiqueta">Monto financiamiento $:</span> ${monto} MM</p>` : ''}
-                ${superficie ? `<p><span class="etiqueta">Superficie en hectáreas:</span> ${superficie}</p>` : ''}
-                <p><span style="font-size:1.5vh;float:right"class="etiqueta"><i>Última fecha de actualización: Marzo 2024</i></span></p>
-            </div>
-        `;
-
-        // Agregar la tarjeta al contenido
-        content += cardContent;
-    }
-});
 
     // Actualiza el contenido de la caja flotante
     document.getElementById('panel').innerHTML = content;
@@ -2714,7 +2765,7 @@ var comunaOptions = [
         value: "10401",
         region: "Los Lagos",
         label: "Chaitén",
-        center: [-72.56314716973296,-43.10772521374169],
+        center: [-72.56314716973296, -43.10772521374169],
         zoom: 7,
     },
     {
@@ -3312,7 +3363,7 @@ $(".regionDropdown").change(function () {
                 sumaEmpleosRegion += parseFloat(feature.properties.Empleos_Op) + parseFloat(feature.properties.Empleos_Co);
             }
         });
-    
+
 
         // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
         const sumaMontoRegionFormateada = sumaMontoRegion.toLocaleString('es-ES', { maximumFractionDigits: 0 });
