@@ -1,7 +1,6 @@
 const map = new maplibregl.Map({
     container: "map",
-    style:
-        "https://api.maptiler.com/maps/basic-v2/style.json?key=LURvXrlYSjugh8dlAFR3",
+    style: "https://api.maptiler.com/maps/basic-v2/style.json?key=LURvXrlYSjugh8dlAFR3",
     center: [-73, -40],
     minZoom: 2, // Establece el zoom máximo permitido
     maxZoom: 18, // Establece el zoom máximo permitido
@@ -59,7 +58,6 @@ map.addControl(new maplibregl.NavigationControl({ showCompass: false }));
 /* map.addControl(new maplibregl.FullscreenControl()); */
 
 
-
 //Esta funcion se usa para id=#flecha.
 function togglePanel() {
     var panel = document.getElementById("estadisticas");
@@ -73,8 +71,10 @@ function togglePanel() {
 
 
 map.on('load', () => {
-
     // Agrega la fuente raster solo si no existe
+
+    map.setLayoutProperty('Country labels', 'text-field', ['get', 'name:es']);
+
     map.addSource('comunasSource', {
         type: "raster",
         tiles: [
@@ -90,7 +90,6 @@ map.on('load', () => {
         source: 'comunasSource',
         paint: {},
     });
-
 
     // Realizar la solicitud fetch para obtener los datos de la fuente WFS
     fetch('https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3Alayer_puntosproyectos_20240426113322&outputFormat=application%2Fjson')
@@ -157,7 +156,6 @@ map.on('load', () => {
                     },
                 })
 
-
                 // Actualizar el contenido del elemento con id 'nacional'
                 document.getElementById('nacional').innerHTML = `
                          <div class="container-fluid estadisticas">
@@ -185,6 +183,29 @@ map.on('load', () => {
                        </div>                                 
                          `
                     ;
+
+                // Función para filtrar las opciones del dropdown según la palabra clave ingresada
+                function filtrarDropdown(dropdown, keyword) {
+                    const options = dropdown.children('option'); // Obtener todas las opciones del dropdown
+                    options.each(function () {
+                        const optionText = $(this).text().toLowerCase(); // Obtener el texto de la opción y convertirlo a minúsculas
+                        const isVisible = optionText.includes(keyword); // Verificar si la palabra clave está incluida en el texto de la opción
+                        $(this).toggle(isVisible); // Mostrar u ocultar la opción según si coincide con la palabra clave
+                    });
+                }
+
+                // Evento de escucha para el campo de búsqueda
+                $('.search-input').on('input', function () {
+                    const keyword = $(this).val().toLowerCase(); // Obtener la palabra clave ingresada por el usuario y convertirla a minúsculas
+                    const dropdown = $(this).closest('.dropdown').find('select'); // Obtener el dropdown asociado al campo de búsqueda
+                    if (keyword === '') {
+                        // Mostrar todas las opciones si el campo de búsqueda está vacío
+                        dropdown.children('option').show();
+                    } else {
+                        // Filtrar las opciones del dropdown según la palabra clave
+                        filtrarDropdown(dropdown, keyword);
+                    }
+                });
 
                 // Actualizar contador al mover el mapa
                 map.on('idle', function () {
@@ -333,23 +354,31 @@ map.on('idle', function () {
             });
         }
     });
-
     // Construye la lista de códigos BIP visibles en la vista actual
     const codigoBIP = features.map(feature => ({
-        BIP: feature.properties.CODIGO_BIP,
+        BIP: feature.properties.CODIGO_BIP || feature.properties.BIP_SINGUI,
         coordenadas: feature.geometry.coordinates
     }));
 
     // Llenar el dropdown con los códigos BIP de los proyectos
     const dropdownCodigoBIP = $(".codigoBIPDropdown");
-    dropdownCodigoBIP.empty(); // Vaciar el dropdown antes de llenarlo nuevamente
-    dropdownCodigoBIP.append(
+    // Crear el input
+    const inputElement = $("<input>", {
+        type: "text",
+        class: "form-control search-input",
+        placeholder: "Filtrar..."
+    });
+
+    // Agregar el input antes de las opciones en el dropdown
+    dropdownCodigoBIP.prepend(inputElement);
+
+    // Luego, agregar la opción para "Código BIP" después del input
+    dropdownCodigoBIP.prepend(
         $("<option>", {
             value: "",
-            text: "Código BIP",
+            text: "Código BIP"
         })
     );
-
     codigoBIP.forEach(BIP => {
         if (BIP.BIP) {
             dropdownCodigoBIP.append(
@@ -379,7 +408,6 @@ map.on('idle', function () {
             });
         }
     });
-
 
     // Construye la tabla con la información de todas las geometrías en la vista actual
     let content = `<h6><i>Proyectos <b>(${features.length})</b></h6></i>`;
@@ -416,7 +444,7 @@ map.on('idle', function () {
                     ${titular ? `<p><span class="etiqueta">Titular:</span> ${titular}</p>` : ''}
                     ${sector ? `<p><span class="etiqueta">Sector:</span> ${sector}</p>` : ''}
                     ${formuladora ? `<p><span class="etiqueta">Unidad Formuladora:</span> ${formuladora}</p>` : ''}
-                    ${finalizadora ? `<p><span class="etiqueta">Unidad Finalizadora:</span> ${finalizadora}</p>` : ''}
+                    ${finalizadora ? `<p><span class="etiqueta">Unidad Financiadora:</span> ${finalizadora}</p>` : ''}
                     ${tecnica ? `<p><span class="etiqueta">Unidad Técnica:</span> ${tecnica}</p>` : ''}
                     ${estado ? `<p><span class="etiqueta">Estado:</span> ${estado}</p>` : ''}
                     ${nudo ? `<p><span class="etiqueta">Nudo crítico:</span> ${nudo}</p>` : ''}
@@ -425,7 +453,6 @@ map.on('idle', function () {
                     <p><span style="font-size:1.5vh;float:right"class="etiqueta"><i>Última fecha de actualización: Marzo 2024</i></span></p>
                 </div>
             `;
-
             // Agregar la tarjeta al contenido
             content += cardContent;
         }
@@ -3250,7 +3277,6 @@ var comunaOptions = [
     },
 ];
 
-
 // Ordena el listado por la propiedad "label"
 comunaOptions.sort(function (a, b) {
     var labelA = a.label.toUpperCase();
@@ -3276,14 +3302,12 @@ regionOptions.forEach(function (option) {
     );
 });
 
-
 $(".regionDropdown").change(function () {
     // Obtiene la región seleccionada
     var selectedRegion = $(this).val();
     // Llena la lista desplegable de comunas
     fillCommunesDropdown(selectedRegion);
 });
-
 
 // Llena las opciones de la lista desplegable de la comuna
 function fillCommunesDropdown(selectedRegion) {
@@ -3313,7 +3337,6 @@ function fillCommunesDropdown(selectedRegion) {
         );
     });
 }
-
 
 $(".regionDropdown").change(function () {
     var selectedRegion = $(this).val();
@@ -3363,7 +3386,6 @@ $(".regionDropdown").change(function () {
                 sumaEmpleosRegion += parseFloat(feature.properties.Empleos_Op) + parseFloat(feature.properties.Empleos_Co);
             }
         });
-
 
         // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
         const sumaMontoRegionFormateada = sumaMontoRegion.toLocaleString('es-ES', { maximumFractionDigits: 0 });
@@ -3448,15 +3470,12 @@ $(".comunaDropdown").change(function () {
                             <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">${totalProyectosComuna}</p>
                             </div>
                         </div>
-
                         <div class="col-sm-6 m-0 p-0">
                             <div class="card m-0 p-0 text-center">
                             <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
                             <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">${sumaMontoComuna.toLocaleString('es-ES', { maximumFractionDigits: 0 })} MM</p>
                             </div>
                         </div>
-
-                     
                     </div>
                 </div>
             </div>
@@ -3473,7 +3492,6 @@ $(".comunaDropdown").change(function () {
         speed: 2
     });
 });
-
 
 map.on("error", function (e) {
     console.error("Error:", e.error);

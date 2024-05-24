@@ -18,9 +18,6 @@
         <div class="container-fluid">
             <div class="row justify-content-end align-items-center">
 
-                <div id="flecha" class="col-2 col-md-1 toggle-button" onclick="togglePanel()">
-                    <img viewBox="0 0 ancho alto" style="width: 5vh;" id="toggleIcon" src="images/info.svg">
-                </div>
                 <div class="col-2 col-md-1">
                     <img class="logo" src="images/logo-gob-header-blanco.svg">
                 </div>
@@ -42,18 +39,30 @@
                 </div>
 
                 <!-- Filtros para versión desktop -->
-                <div class="col-1 col-md-1 d-none d-md-block">
-                    <select class="form-select form-select-sm regionDropdown"></select>
+                <div class="col-1 col-md-1 d-none d-md-block dropdown">
+                        <select class="form-select form-select-sm regionDropdown">
+                        <!-- Opciones del dropdown de región -->
+                    </select>
                 </div>
-                <div class="col-1 col-md-1 d-none d-md-block">
-                    <select class="form-select form-select-sm comunaDropdown"></select>
+                <div class="col-1 col-md-1 d-none d-md-block dropdown">
+                    <select class="form-select form-select-sm comunaDropdown">
+                        <!-- Opciones del dropdown de comuna -->
+                    </select>
                 </div>
-                <div class="col-1 col-md-1 d-none d-md-block">
-                    <select class="form-select form-select-sm nombreProyectoDropdown"></select>
+                <div class="col-1 col-md-1 d-none d-md-block dropdown">
+                    <input type="text" class="form-control search-input" placeholder="Filtrar...">
+                    <select class="form-select form-select-sm nombreProyectoDropdown">
+                        <!-- Opciones del dropdown de nombre de proyecto -->
+                    </select>
                 </div>
-                <div class="col-1 col-md-1 d-none d-md-block">
-                    <select class="form-select form-select-sm codigoBIPDropdown"></select>
+                <div class="col-1 col-md-1 d-none d-md-block dropdown">
+                    <input type="text" class="form-control search-input" placeholder="Filtrar...">
+                    <select class="form-select form-select-sm codigoBIPDropdown">
+                        <!-- Opciones del dropdown de código BIP -->
+                    </select>
                 </div>
+                
+                
                 <!-- Botón de ubicación -->
                 <div class="card col-6 col-md-1" id="locate-button" onclick="locateUser()">
                     <span><img style="width: 1.1rem;margin-right: 0.5rem;" src="images/locate.svg">Tu ubicación</span>
@@ -65,7 +74,7 @@
         <!-- Menú colapsable para versión móvil -->
         <div class="collapse" id="navbarCollapse">
             <div class="container">
-                <div class="row">
+                <div class="d-flex flex-column flex-md-row">
                     <div class="col-12 col-md-2">
                         <select class="form-select form-select-sm regionDropdown">
                             <!-- Opciones de la lista desplegable para la región -->
@@ -74,6 +83,18 @@
                     <div class="col-12 col-md-2">
                         <select class="form-select form-select-sm comunaDropdown">
                             <!-- Opciones de la lista desplegable para la comuna -->
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 dropdown">
+                        <input type="text" class="form-control search-input" placeholder="Buscar nombre del proyecto...">
+                        <select class="form-select form-select-sm nombreProyectoDropdown">
+                            <!-- Opciones del dropdown de nombre de proyecto -->
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 dropdown">
+                        <input type="text" class="form-control search-input" placeholder="Buscar por código BIP...">
+                        <select class="form-select form-select-sm codigoBIPDropdown">
+                            <!-- Opciones del dropdown de código BIP -->
                         </select>
                     </div>
                 </div>

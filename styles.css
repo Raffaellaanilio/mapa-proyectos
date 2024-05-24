@@ -59,12 +59,13 @@ header {
 
 
 #estadisticas {
-  width: 100%;
+  width: 25%;
   height: 100vh;
   box-sizing: border-box;
-  position: relative;
+  position: absolute;
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: white;
   z-index: 5000;
   border-radius: 1%;
   border: 0;
@@ -74,9 +75,9 @@ header {
 }
 
 #map {
-  position: relative;
-  height: 99vh;
-  width: 100%;
+  position: absolute;
+  height: 100%;
+  width: 51%;
 }
 
 #bottom-panel {
@@ -193,9 +194,8 @@ p {
   }
 
   #estadisticas {
-    top: 0;
     height: 50vh;
-    width: 100%;
+    width: 50%;
   }
 
   .logo {
@@ -203,7 +203,7 @@ p {
   }
 
   #map {
-    width: 100%;
+    width: 52%;
     height: 50vh;
   }
 
