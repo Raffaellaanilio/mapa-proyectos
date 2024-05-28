@@ -2,7 +2,7 @@ const map = new maplibregl.Map({
     container: "map",
     style: "https://api.maptiler.com/maps/basic-v2/style.json?key=LURvXrlYSjugh8dlAFR3",
     center: [-73, -40],
-    minZoom: 2, // Establece el zoom máximo permitido
+    minZoom: 1, // Establece el zoom máximo permitido
     maxZoom: 18, // Establece el zoom máximo permitido
     zoom: 3,
     pitch: 0, // Configuración del ángulo de inclinación (establecer en 0 para desactivar la inclinación)
@@ -92,69 +92,70 @@ map.on('load', () => {
     });
 
     // Realizar la solicitud fetch para obtener los datos de la fuente WFS
-    fetch('https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3Alayer_puntosproyectos_20240426113322&outputFormat=application%2Fjson')
-        .then(response => response.json())
-        .then(data => {
-            // Agregar la fuente de datos GeoJSON al mapa con los datos obtenidos
-            map.addSource('proyectos-source', {
-                type: 'geojson',
-                cluster: false,
-                data: data,
-            });
+    fetch('https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3AproyectosSEGPRESMayo2024&outputFormat=application%2Fjson')
+    .then(response => response.json())
+    .then(data => {
+        // Agregar la fuente de datos GeoJSON al mapa con los datos obtenidos
+        map.addSource('proyectos-source', {
+            type: 'geojson',
+            cluster: false,
+            data: data,
+        });
 
-            // Intenta cargar la imagen directamente
-            map.loadImage('/images/location.png', (error, image) => {
-                if (error) {
-                    // Si hay un error, carga una imagen de respaldo o maneja el error según tus necesidades
-                    map.loadImage('/images/location.png', (backupError, backupImage) => {
-                        if (backupError) throw backupError;
+        // Agregar la capa de puntos al mapa como círculos
+        map.addLayer({
+            id: 'proyectos-layer',
+            type: 'circle', // Cambiado a 'circle'
+            source: 'proyectos-source',
+            paint: {
+                'circle-radius': 6, // Radio del círculo
+                'circle-color': [
+                    'case',
+                    ['==', ['get', 'DIPRES'], 'Sí'], // Condición para "Sí"
+                    '#006FB3', // Color azul para "Sí"
+                    ['==', ['get', 'DIPRES'], 'No'], // Condición para "No"
+                    '#FE6565', // Color rojo para "No"
+                    'gray' // Color por defecto (si no es ni "Sí" ni "No")
+                ],
+                'circle-stroke-color': 'white', // Color del borde
+                'circle-stroke-width': 1 // Ancho del borde
+            }
+        });
 
-                        map.addImage('circle-15', backupImage);
-                    });
-                } else {
-                    // Si la carga de la imagen tiene éxito, agrégala como 'circle-15'
-                    map.addImage('circle-15', image);
-                }
-
-                // Agregar la capa de puntos al mapa como símbolos
-                map.addLayer({
-                    id: 'proyectos-layer',
-                    type: 'symbol',
-                    source: 'proyectos-source',
-                    layout: {
-                        'icon-image': 'circle-15',
-                        'icon-allow-overlap': true,
-                        'text-allow-overlap': false,
-                        'text-optional': true,
-                        'icon-size': 1,
-                        'text-field': [
-                            'coalesce', // Utiliza coalesce para obtener el primer valor no nulo
-                            ['get', 'NOMBRE_PRO'], // Intenta obtener el valor de 'Nombre_Pro'
-                            ['get', 'NOMBRE_INI'] // Si 'Nombre_Pro' está vacío, intenta obtener el valor de 'Otro_Campo'
-                        ],
-                        'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-                        'text-radial-offset': 0.5,
-                        'text-justify': 'auto',
-                        "text-size": {
-                            "stops": [
-                                // Zoom level 0 and below: text size 0 (hidden)
-                                [0, 0],
-                                // Zoom level 3 and below: text size 0 (hidden)
-                                [4, 0],
-                                [6, 0],
-                                [8, 0],
-                                [9, 0],
-                                [10, 12],
-                                [12, 14],
-                            ]
-                        }
-                    },
-                    paint: {
-                        'text-color': 'black', // Color del texto
-                        'text-halo-color': 'white', // Color del buffer blanco
-                        'text-halo-width': 2, // Ancho del buffer                       
-                    },
-                })
+        // Agregar la capa de texto al mapa
+        map.addLayer({
+            id: 'proyectos-text-layer',
+            type: 'symbol',
+            source: 'proyectos-source',
+            layout: {
+                'text-field': [
+                    'coalesce', // Utiliza coalesce para obtener el primer valor no nulo
+                    ['get', 'NOMBRE'], // Intenta obtener el valor de 'NOMBRE_PRO'
+                ],
+                'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                'text-radial-offset': 0.5,
+                'text-justify': 'auto',
+                "text-size": {
+                    "stops": [
+                        [0, 0],
+                        [4, 0],
+                        [6, 0],
+                        [8, 0],
+                        [9, 0],
+                        [10, 12],
+                        [12, 14],
+                    ]
+                },
+                'text-allow-overlap': false,
+                'text-optional': true
+            },
+            paint: {
+                'text-color': 'black', // Color del texto
+                'text-halo-color': 'white', // Color del buffer blanco
+                'text-halo-width': 2, // Ancho del buffer
+            }
+        });
+    
 
                 // Actualizar el contenido del elemento con id 'nacional'
                 document.getElementById('nacional').innerHTML = `
@@ -220,9 +221,9 @@ map.on('load', () => {
                     // Iterar sobre las características y sumar los montos
                     features.forEach(function (feature) {
                         // Verificar si la característica tiene la propiedad 'Monto'
-                        if (feature.properties && feature.properties.MONTO) {
+                        if (feature.properties && feature.properties.CTOTAL) {
                             // Obtener el monto de la característica y sumarlo
-                            sumaMonto += parseFloat(feature.properties.MONTO);
+                            sumaMonto += parseFloat(feature.properties.CTOTAL);
                         }
                     });
 
@@ -300,10 +301,7 @@ map.on('load', () => {
                 map.getCanvas().style.cursor = '';
             });
         })
-        .catch(error => {
-            console.error('Error al obtener los datos de la fuente WFS:', error);
-        });
-});
+    
 
 map.on('idle', function () {
     // Obtén las features en la vista actual
@@ -414,21 +412,33 @@ map.on('idle', function () {
 
     features.forEach((feature, index) => {
         const featureId = feature.properties.ID; // Extrae el ID de la característica
-        const nombre = feature.properties.NOMBRE_DE_ || feature.properties.NOMBRE_PRO;
-        const titular = feature.properties.TITULAR;
+        const codigo = feature.properties.COD;
+        const nombre = feature.properties.NOMBRE;
         const tipo = feature.properties.PUBLICO_PR;
-        const sector = feature.properties.SECTOR;
+        const sector = feature.properties.SECTOR; // Si se encuentra identificado por un Sector
         const region = feature.properties.REGION;
         const comuna = feature.properties.COMUNA;
         const provincia = feature.properties.PROVINCIA;
-        const monto = feature.properties.MONTO || feature.properties.MONTO_2024;
-        const estado = feature.properties.ESTADO;
+        const estado = feature.properties.E_MDSF;
         const nudo = feature.properties.NUDO_CRIT;
-        const descripcion = feature.properties.DESCRIPCION;
         const superficie = feature.properties.SUPERFICIE;
         const formuladora = feature.properties.UNIDAD_FOR;
         const finalizadora = feature.properties.UNIDAD_FIN;
-        const tecnica = feature.properties.unidad_te;
+        const tecnica = feature.properties.UNIDAD_TE;
+        const costoTotal = feature.properties.CTOTAL;
+        const ejecutado2023 = feature.properties.EJ2023;
+        const ejecutado2024 = feature.properties.EJ2024;
+        const dipres = feature.properties.DIPRES; //Si se encuentra con identificación en DIPRES
+        const sin = feature.properties.SIN; //Si se encuentra en sistema nacional de inversiones
+        const compromisoDCI = feature.properties.COMPR_DCI;
+        const comentarioDCI = feature.properties.COM_DCI;
+        const medidaDCI = feature.properties.MEDI_DCI;
+        const RATE = feature.properties.RATE;
+        const comentarioRATE = feature.properties.COM_RATE;
+        const responsable = feature.properties.RESPONSABLE;
+        const fuente = feature.properties.FUENTE;
+        const fechaCompromiso = feature.properties.COMPROMISO;
+ 
 
         // Verificar si hay suficiente información para agregar la tarjeta
         if (nombre || titular || tipo || sector || region || comuna || provincia || monto || estado || nudo || superficie || formuladora || finalizadora || tecnica) {
@@ -438,19 +448,31 @@ map.on('idle', function () {
             // Construir el contenido de la tarjeta
             let cardContent = `
                 <div class="card ficha${isFirstElement ? ' first-element' : ''}" onclick="centrarMapa('${featureId}')">
-                    ${nombre ? `<p class="nombre">${nombre}</p>` : ''}
-                    ${comuna && provincia && region ? `<p class="ubicacion">Comuna de ${comuna}, provincia de ${provincia}, región de ${region}</p>` : ''}
-                    ${tipo ? `<p><span class="etiqueta">Tipo:</span> ${tipo}</p>` : ''}
-                    ${titular ? `<p><span class="etiqueta">Titular:</span> ${titular}</p>` : ''}
+                    ${nombre ? `<p class="nombre">${nombre} (BIP: ${codigo})</p>` : ''}
+                    ${comuna && region ? `<p class="ubicacion">Comuna de ${comuna}, región de ${region}</p>` : ''}
                     ${sector ? `<p><span class="etiqueta">Sector:</span> ${sector}</p>` : ''}
+                    ${estado ? `<p><span class="etiqueta">Estado:</span> ${estado}</p>` : ''}
+                    ${costoTotal ? `<p><span class="etiqueta">Costo total del proyecto:</span> ${costoTotal} ($M) </p>` : ''}
+                    ${ejecutado2023 ? `<p><span class="etiqueta">Ejecutado acumulado al 2023:</span> ${ejecutado2023} ($M)</p>` : ''}
+                    ${ejecutado2024 ? `<p><span class="etiqueta">Ejecutado 2024:</span> ${ejecutado2024} ($M)</p>` : ''}
                     ${formuladora ? `<p><span class="etiqueta">Unidad Formuladora:</span> ${formuladora}</p>` : ''}
                     ${finalizadora ? `<p><span class="etiqueta">Unidad Financiadora:</span> ${finalizadora}</p>` : ''}
                     ${tecnica ? `<p><span class="etiqueta">Unidad Técnica:</span> ${tecnica}</p>` : ''}
-                    ${estado ? `<p><span class="etiqueta">Estado:</span> ${estado}</p>` : ''}
-                    ${nudo ? `<p><span class="etiqueta">Nudo crítico:</span> ${nudo}</p>` : ''}
-                    ${monto ? `<p><span class="etiqueta">Monto financiamiento $:</span> ${monto} MM</p>` : ''}
-                    ${superficie ? `<p><span class="etiqueta">Superficie en hectáreas:</span> ${superficie}</p>` : ''}
-                    <p><span style="font-size:1.5vh;float:right"class="etiqueta"><i>Última fecha de actualización: Marzo 2024</i></span></p>
+                    ${dipres ? `<p><span class="etiqueta">Identificado por DIPRES</span> ${dipres}</p>` : ''}
+                    ${sin ? `<p><span class="etiqueta">Se encuentra en Sistema Nacional de Inversiones:</span> ${sin}</p>` : ''}
+                    ${compromisoDCI ? `<p><span class="etiqueta">Compromiso por la DCI:</span> ${compromisoDCI}</p>` : ''}
+                    ${RATE ? `<p><span class="etiqueta">RATE MDS:</span> ${RATE}</p>` : ''}
+                    ${comentarioRATE ? `<p><span class="etiqueta">Comentario RATE:</span> ${comentarioRATE}</p>` : ''}
+                    ${estado ? `<p><span class="etiqueta">Etapa MDSF:</span> ${estado}</p>` : ''}
+                    ${comentarioDCI ? `<p><span class="etiqueta">Comentario DCI:</span> ${comentarioDCI}</p>` : ''}
+                    ${medidaDCI ? `<p><span class="etiqueta">Medida DCI:</span> ${medidaDCI}</p>` : ''}
+                    ${fuente ? `<p><span class="etiqueta">Fuente - Cita Medida DCI:</span> ${fuente}</p>` : ''}
+                    ${responsable ? `<p><span class="etiqueta">Ministerio Responsable:</span> ${responsable}</p>` : ''}
+                    ${fechaCompromiso ? `<p><span class="etiqueta">Fecha Compromiso</span> ${fechaCompromiso}</p>` : ''}
+
+
+
+                    <p><span style="font-size:1.5vh;float:right"class="etiqueta"><i>Última fecha de actualización: Mayo 2024</i></span></p>
                 </div>
             `;
             // Agregar la tarjeta al contenido
@@ -3369,9 +3391,9 @@ $(".regionDropdown").change(function () {
         // Iterar sobre las características y sumar los montos de los proyectos de la región seleccionada
         features.forEach(function (feature) {
             // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
-            if (feature.properties && feature.properties.MONTO && feature.properties.CUT_REG === selectedRegion) {
+            if (feature.properties && feature.properties.CTOTAL && feature.properties.CUT_REG === selectedRegion) {
                 // Obtener el monto de la característica y sumarlo
-                sumaMontoRegion += parseFloat(feature.properties.MONTO);
+                sumaMontoRegion += parseFloat(feature.properties.CTOTAL);
             }
         });
 
@@ -3447,13 +3469,11 @@ $(".comunaDropdown").change(function () {
         // Realiza el conteo de proyectos, sumas de monto y empleos
         let totalProyectosComuna = 0;
         let sumaMontoComuna = 0;
-        let sumaEmpleosComuna = 0;
         const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
         features.forEach(function (feature) {
             if (feature.properties && feature.properties.JOIN_COUNT && feature.properties.CUT_COM === selectedComuna) {
                 totalProyectosComuna += parseFloat(feature.properties.JOIN_COUNT);
-                sumaMontoComuna += parseFloat(feature.properties.MONTO);
-                sumaEmpleosComuna += parseFloat(feature.properties.Empleos_Op);
+                sumaMontoComuna += parseFloat(feature.properties.CTOTAL);
             }
         });
 
