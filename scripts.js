@@ -93,72 +93,72 @@ map.on('load', () => {
 
     // Realizar la solicitud fetch para obtener los datos de la fuente WFS
     fetch('https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3AproyectosSEGPRESMayo2024&outputFormat=application%2Fjson')
-    .then(response => response.json())
-    .then(data => {
-        // Agregar la fuente de datos GeoJSON al mapa con los datos obtenidos
-        map.addSource('proyectos-source', {
-            type: 'geojson',
-            cluster: false,
-            data: data,
-        });
+        .then(response => response.json())
+        .then(data => {
+            // Agregar la fuente de datos GeoJSON al mapa con los datos obtenidos
+            map.addSource('proyectos-source', {
+                type: 'geojson',
+                cluster: false,
+                data: data,
+            });
 
-        // Agregar la capa de puntos al mapa como círculos
-        map.addLayer({
-            id: 'proyectos-layer',
-            type: 'circle', // Cambiado a 'circle'
-            source: 'proyectos-source',
-            paint: {
-                'circle-radius': 6, // Radio del círculo
-                'circle-color': [
-                    'case',
-                    ['==', ['get', 'DIPRES'], 'Sí'], // Condición para "Sí"
-                    '#006FB3', // Color azul para "Sí"
-                    ['==', ['get', 'DIPRES'], 'No'], // Condición para "No"
-                    '#FE6565', // Color rojo para "No"
-                    'gray' // Color por defecto (si no es ni "Sí" ni "No")
-                ],
-                'circle-stroke-color': 'white', // Color del borde
-                'circle-stroke-width': 1 // Ancho del borde
-            }
-        });
+            // Agregar la capa de puntos al mapa como círculos
+            map.addLayer({
+                id: 'proyectos-layer',
+                type: 'circle', // Cambiado a 'circle'
+                source: 'proyectos-source',
+                paint: {
+                    'circle-radius': 6, // Radio del círculo
+                    'circle-color': [
+                        'case',
+                        ['==', ['get', 'DIPRES'], 'Sí'], // Condición para "Sí"
+                        '#006FB3', // Color azul para "Sí"
+                        ['==', ['get', 'DIPRES'], 'No'], // Condición para "No"
+                        '#FE6565', // Color rojo para "No"
+                        'gray' // Color por defecto (si no es ni "Sí" ni "No")
+                    ],
+                    'circle-stroke-color': 'white', // Color del borde
+                    'circle-stroke-width': 1 // Ancho del borde
+                }
+            });
 
-        // Agregar la capa de texto al mapa
-        map.addLayer({
-            id: 'proyectos-text-layer',
-            type: 'symbol',
-            source: 'proyectos-source',
-            layout: {
-                'text-field': [
-                    'coalesce', // Utiliza coalesce para obtener el primer valor no nulo
-                    ['get', 'NOMBRE'], // Intenta obtener el valor de 'NOMBRE_PRO'
-                ],
-                'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-                'text-radial-offset': 0.5,
-                'text-justify': 'auto',
-                "text-size": {
-                    "stops": [
-                        [0, 0],
-                        [4, 0],
-                        [6, 0],
-                        [8, 0],
-                        [9, 0],
-                        [10, 12],
-                        [12, 14],
-                    ]
+            // Agregar la capa de texto al mapa
+            map.addLayer({
+                id: 'proyectos-text-layer',
+                type: 'symbol',
+                source: 'proyectos-source',
+                layout: {
+                    'text-field': [
+                        'coalesce', // Utiliza coalesce para obtener el primer valor no nulo
+                        ['get', 'NOMBRE'], // Intenta obtener el valor de 'NOMBRE_PRO'
+                    ],
+                    'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                    'text-radial-offset': 0.5,
+                    'text-justify': 'auto',
+                    "text-size": {
+                        "stops": [
+                            [0, 0],
+                            [4, 0],
+                            [6, 0],
+                            [8, 0],
+                            [9, 0],
+                            [10, 12],
+                            [12, 14],
+                        ]
+                    },
+                    'text-allow-overlap': false,
+                    'text-optional': true
                 },
-                'text-allow-overlap': false,
-                'text-optional': true
-            },
-            paint: {
-                'text-color': 'black', // Color del texto
-                'text-halo-color': 'white', // Color del buffer blanco
-                'text-halo-width': 2, // Ancho del buffer
-            }
-        });
-    
+                paint: {
+                    'text-color': 'black', // Color del texto
+                    'text-halo-color': 'white', // Color del buffer blanco
+                    'text-halo-width': 2, // Ancho del buffer
+                }
+            });
 
-                // Actualizar el contenido del elemento con id 'nacional'
-                document.getElementById('nacional').innerHTML = `
+
+            // Actualizar el contenido del elemento con id 'nacional'
+            document.getElementById('nacional').innerHTML = `
                          <div class="container-fluid estadisticas">
                          <div class="row">
                          <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Total Nacional</p>                           
@@ -166,15 +166,15 @@ map.on('load', () => {
                              <div class="row">
                              <div class="col-sm-6 m-0 p-0">
                              <div class="card m-0 p-0 text-center">
-                             <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Proyectos</p>
-                             <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">152</p>
+                             <p style="font-size:1rem;font-weight:bold;color:#FE6565" class="mb-2">Todos los proyectos</p>
+                             <p style="font-size:2rem;font-weight:bold;color:#FE6565"class="mb-0">1538</p>
                                  </div>
                                </div>
                                
                                <div class="col-sm-6 m-0 p-0">
                                <div class="card m-0 p-0 text-center">
                                <p style="font-size:1rem;font-weight:bold;color:#0A132D" class="mb-2">Inversión</p>
-                               <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">1.431.494.917 MM</p>
+                               <p style="font-size:1rem;font-weight:bold;color:#0A132D"class="mb-0">7.574.761.407 MM</p>
                                  </div>
                                </div>
                            
@@ -183,73 +183,81 @@ map.on('load', () => {
                          </div>
                        </div>                                 
                          `
-                    ;
+                ;
 
-                // Función para filtrar las opciones del dropdown según la palabra clave ingresada
-                function filtrarDropdown(dropdown, keyword) {
-                    const options = dropdown.children('option'); // Obtener todas las opciones del dropdown
-                    options.each(function () {
-                        const optionText = $(this).text().toLowerCase(); // Obtener el texto de la opción y convertirlo a minúsculas
-                        const isVisible = optionText.includes(keyword); // Verificar si la palabra clave está incluida en el texto de la opción
-                        $(this).toggle(isVisible); // Mostrar u ocultar la opción según si coincide con la palabra clave
-                    });
+            // Función para filtrar las opciones del dropdown según la palabra clave ingresada
+            function filtrarDropdown(dropdown, keyword) {
+                const options = dropdown.children('option'); // Obtener todas las opciones del dropdown
+                options.each(function () {
+                    const optionText = $(this).text().toLowerCase(); // Obtener el texto de la opción y convertirlo a minúsculas
+                    const isVisible = optionText.includes(keyword); // Verificar si la palabra clave está incluida en el texto de la opción
+                    $(this).toggle(isVisible); // Mostrar u ocultar la opción según si coincide con la palabra clave
+                });
+            }
+
+            // Evento de escucha para el campo de búsqueda
+            $('.search-input').on('input', function () {
+                const keyword = $(this).val().toLowerCase(); // Obtener la palabra clave ingresada por el usuario y convertirla a minúsculas
+                const dropdown = $(this).closest('.dropdown').find('select'); // Obtener el dropdown asociado al campo de búsqueda
+                if (keyword === '') {
+                    // Mostrar todas las opciones si el campo de búsqueda está vacío
+                    dropdown.children('option').show();
+                } else {
+                    // Filtrar las opciones del dropdown según la palabra clave
+                    filtrarDropdown(dropdown, keyword);
                 }
+            });
 
-                // Evento de escucha para el campo de búsqueda
-                $('.search-input').on('input', function () {
-                    const keyword = $(this).val().toLowerCase(); // Obtener la palabra clave ingresada por el usuario y convertirla a minúsculas
-                    const dropdown = $(this).closest('.dropdown').find('select'); // Obtener el dropdown asociado al campo de búsqueda
-                    if (keyword === '') {
-                        // Mostrar todas las opciones si el campo de búsqueda está vacío
-                        dropdown.children('option').show();
-                    } else {
-                        // Filtrar las opciones del dropdown según la palabra clave
-                        filtrarDropdown(dropdown, keyword);
+            // Actualizar contador al mover el mapa
+            map.on('idle', function () {
+                // SUMAR POR RENDERIZADOS FILTRANDO POR CODIGO DE REGION SELECCIONADA:
+                const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
+
+                const vistaActual = features.length;
+
+                // SUMAR PLATA
+                let sumaMonto = 0;
+
+                // Iterar sobre las características y sumar los montos
+                features.forEach(function (feature) {
+                    // Verificar si la característica tiene la propiedad 'CTOTAL'
+                    if (feature.properties && feature.properties.CTOTAL) {
+                        // Obtener el monto de la característica y verificar que no sea "-"
+                        const monto = feature.properties.CTOTAL;
+                        if (monto !== '-') {
+                            // Sumar el monto convertido a número
+                            sumaMonto += parseFloat(monto);
+                        }
                     }
                 });
 
-                // Actualizar contador al mover el mapa
-                map.on('idle', function () {
-                    //SUMAR POR POR RENDERIZADOS FILTRANDO POR CODIGO DE REGION SELECCIONADA: 
-                    const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
+                // Ahora `sumaMonto` contiene la suma total de los montos válidos
+                console.log('Suma total del monto:', sumaMonto);
 
-                    const vistaActual = features.length;
 
-                    //SUMAR PLATA
-                    let sumaMonto = 0;
+                // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
+                const sumaMontoFormateada = sumaMonto.toLocaleString('es-ES', { maximumFractionDigits: 0 });
 
-                    // Iterar sobre las características y sumar los montos
-                    features.forEach(function (feature) {
-                        // Verificar si la característica tiene la propiedad 'Monto'
-                        if (feature.properties && feature.properties.CTOTAL) {
-                            // Obtener el monto de la característica y sumarlo
-                            sumaMonto += parseFloat(feature.properties.CTOTAL);
-                        }
-                    });
+                // Mostrar la suma de montos formateada
+                console.log('Suma de Montos:', sumaMontoFormateada);
 
-                    // Transformar el número de la suma de montos con puntos cada tres dígitos y reemplazar puntos y comas
-                    const sumaMontoFormateada = sumaMonto.toLocaleString('es-ES', { maximumFractionDigits: 0 });
+                // SUMAR EMPLEOS
+                let sumaEmpleosConstruccion = 0;
 
-                    // Mostrar la suma de montos formateada
-                    console.log('Suma de Montos:', sumaMontoFormateada);
+                // Iterar sobre las características y sumar los empleos
+                features.forEach(function (feature) {
+                    // Verificar si la característica tiene las propiedades 'Empleos_Op' y 'Empleos_Co'
+                    if (feature.properties && feature.properties.Empleos_Op && feature.properties.Empleos_Co) {
+                        // Obtener los empleos de la característica y sumarlos
+                        sumaEmpleosConstruccion += parseFloat(feature.properties.Empleos_Op) + parseFloat(feature.properties.Empleos_Co);
+                    }
+                });
 
-                    // SUMAR EMPLEOS
-                    let sumaEmpleosConstruccion = 0;
+                // Mostrar la suma de montos
+                console.log('Suma de Montos:', sumaEmpleosConstruccion);
 
-                    // Iterar sobre las características y sumar los empleos
-                    features.forEach(function (feature) {
-                        // Verificar si la característica tiene las propiedades 'Empleos_Op' y 'Empleos_Co'
-                        if (feature.properties && feature.properties.Empleos_Op && feature.properties.Empleos_Co) {
-                            // Obtener los empleos de la característica y sumarlos
-                            sumaEmpleosConstruccion += parseFloat(feature.properties.Empleos_Op) + parseFloat(feature.properties.Empleos_Co);
-                        }
-                    });
-
-                    // Mostrar la suma de montos
-                    console.log('Suma de Montos:', sumaEmpleosConstruccion);
-
-                    // Actualizar el contenido del div con el contador
-                    document.getElementById('extent').innerHTML = `
+                // Actualizar el contenido del div con el contador
+                document.getElementById('extent').innerHTML = `
                     <div class="container-fluid estadisticas">
                     <div class="row">
                     <p style="background-color:#0A132D;color:white; border-radius:0.3rem" class="col-12 text-center mb-1">Vista actual</p>
@@ -275,33 +283,33 @@ map.on('load', () => {
                     </div>
                 </div>                    
         `;
-                });
             });
+        });
 
-            // Evento de clic en la capa de puntos
-            map.on('click', 'proyectos-layer', function (e) {
-                // Obtén las coordenadas de la feature clicada
-                const coordinates = e.features[0].geometry.coordinates;
+    // Evento de clic en la capa de puntos
+    map.on('click', 'proyectos-layer', function (e) {
+        // Obtén las coordenadas de la feature clicada
+        const coordinates = e.features[0].geometry.coordinates;
 
-                // Centra el mapa en las coordenadas de la feature clicada
-                map.flyTo({
-                    center: coordinates,
-                    zoom: 17, // Puedes ajustar el nivel de zoom según tus necesidades
-                    speed: 2
-                });
-            });
+        // Centra el mapa en las coordenadas de la feature clicada
+        map.flyTo({
+            center: coordinates,
+            zoom: 17, // Puedes ajustar el nivel de zoom según tus necesidades
+            speed: 2
+        });
+    });
 
-            // Cambia el cursor al pasar sobre las features
-            map.on('mouseenter', 'proyectos-layer', function () {
-                map.getCanvas().style.cursor = 'pointer';
-            });
+    // Cambia el cursor al pasar sobre las features
+    map.on('mouseenter', 'proyectos-layer', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
 
-            // Restaura el cursor al salir de las features
-            map.on('mouseleave', 'proyectos-layer', function () {
-                map.getCanvas().style.cursor = '';
-            });
-        })
-    
+    // Restaura el cursor al salir de las features
+    map.on('mouseleave', 'proyectos-layer', function () {
+        map.getCanvas().style.cursor = '';
+    });
+})
+
 
 map.on('idle', function () {
     // Obtén las features en la vista actual
@@ -438,7 +446,7 @@ map.on('idle', function () {
         const responsable = feature.properties.RESPONSABLE;
         const fuente = feature.properties.FUENTE;
         const fechaCompromiso = feature.properties.COMPROMISO;
- 
+
 
         // Verificar si hay suficiente información para agregar la tarjeta
         if (nombre || titular || tipo || sector || region || comuna || provincia || monto || estado || nudo || superficie || formuladora || finalizadora || tecnica) {
@@ -509,23 +517,24 @@ function centrarMapa(featureId) {
 
 // Array de objetos para las opciones de la lista desplegable de la región ////ARREGLAR CODIGOS ******
 var regionOptions = [
-    { value: "15", label: "Arica y Parinacota", center: [-70.3026, -18.4783], zoom: 6, },
-    { value: "01", label: "Tarapacá", center: [-69.3269, -19.9239], zoom: 6 },
-    { value: "02", label: "Antofagasta", center: [-68.9554, -23.4226], zoom: 6 },
-    { value: "03", label: "Atacama", center: [-70.9834, -27.4975], zoom: 6 },
-    { value: "04", label: "Coquimbo", center: [-71.3375, -29.9711], zoom: 6 },
-    { value: "05", label: "Valparaíso", center: [-71.6251, -32.7781], zoom: 6 },
-    { value: "13", label: "Metropolitana", center: [-70.6058, -33.4378], zoom: 6, },
-    { value: "06", label: "OHiggins", center: [-70.7152, -34.6354], zoom: 6 },
-    { value: "07", label: "Maule", center: [-71.5744, -35.6654], zoom: 6 },
-    { value: "16", label: "Ñuble", center: [-71.5374, -36.4966], zoom: 6 },
-    { value: "08", label: "Biobío", center: [-72.2426, -37.4468], zoom: 6 },
-    { value: "09", label: "La Araucanía", center: [-71.9996, -38.9489], zoom: 6 },
-    { value: "14", label: "Los Ríos", center: [-72.1652, -39.6465], zoom: 6 },
-    { value: "10", label: "Los Lagos", center: [-73, -41.7492], zoom: 6 },
-    { value: "11", label: "Aysén", center: [-73.2475, -45.9751], zoom: 6 },
-    { value: "12", label: "Magallanes", center: [-73.0802, -52.8191], zoom: 6 },
+    { value: "15", label: "Arica y Parinacota", bounds: [[-70.3776176504258,-19.22905000099996],[-68.91131273799994,-17.49839933599998]] },
+    { value: "01", label: "Tarapacá", bounds: [[-70.28664999999995,-21.627740000999943],[-68.40487066999998,-18.936775026772835]] },
+    { value: "02", label: "Antofagasta", bounds: [[-70.74304000099994,-26.062272625999984],[-66.99050347199994,-20.934544566999925]] },
+    { value: "03", label: "Atacama", bounds: [[-71.59191000099997,-29.53500000199994],[-68.26308429999995,-25.28583968499992]] },
+    { value: "04", label: "Coquimbo", bounds: [[-71.71781999799998,-32.28247000099997],[-69.80908203099995,-29.036599774999964]] },
+    { value: "05", label: "Valparaíso", bounds: [[-109.45491615599997,-33.97420000099993],[-69.98923310599997,-26.273140141999928]] },
+    { value: "13", label: "Metropolitana", bounds: [[-71.71547979899998,-34.29102327999993],[-69.76975011099995,-32.92192455199995]] },
+    { value: "06", label: "OHiggins", bounds: [[-72.05754075199997,-35.00519857245869],[-70.00924489699997,-33.85068588199993]] },
+    { value: "07", label: "Maule", bounds: [[-72.78572999999994,-36.54381834199996],[-70.31174712199999,-34.68437372499994]] },
+    { value: "16", label: "Ñuble", bounds: [[-72.88470334599998,-37.19846992899995],[-71.00700729999994,-36.005384084999946]] },
+    { value: "08", label: "Biobío", bounds: [[-73.97358999999994,-38.49244739099998],[-70.98297989199995,-36.443240000999936]] },
+    { value: "09", label: "La Araucanía", bounds: [[-73.52025999999995,-39.63723989299995],[-70.82645737199994,-37.58172591199996]] },
+    { value: "14", label: "Los Ríos", bounds: [[-73.72527999899995,-40.680939548999945],[-71.59228686699998,-39.287472342999926]] },
+    { value: "10", label: "Los Lagos", bounds: [[-74.84848000099998,-44.067119497485976],[-71.58100815399996,-40.236070437999956]] },
+    { value: "11", label: "Aysén", bounds: [[-75.67792079699996,-49.15877555912798],[-71.09130859399994,-43.63799097799995]] },
+    { value: "12", label: "Magallanes", bounds: [[-75.72316309799999,-56.53776581899995],[-66.41559401099994,-48.594091396999936]] },
 ];
+
 
 // Array de objetos para las opciones de la lista desplegable de la región
 var comunaOptions = [
@@ -534,6 +543,7 @@ var comunaOptions = [
         value: "06117",
         region: "Libertador General Bernardo Ohiggins",
         label: "San Vicente",
+        bounds:[[-109.45491615599997,-33.97420000099993],[-69.98923310599997,-26.273140141999928]],
         center: [-71.115331125859001, -34.460149342504899],
         zoom: 7,
     },
@@ -3384,18 +3394,25 @@ $(".regionDropdown").change(function () {
                 totalProyectosRegion += parseFloat(feature.properties.JOIN_COUNT);
             }
         });
+// SUMAR MONTOS DE PROYECTOS DE LA REGIÓN SELECCIONADA
+let sumaMontoRegion = 0;
 
-        // SUMAR MONTOS DE PROYECTOS DE LA REGIÓN SELECCIONADA
-        let sumaMontoRegion = 0;
+// Iterar sobre las características y sumar los montos de los proyectos de la región seleccionada
+features.forEach(function (feature) {
+    // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
+    if (feature.properties && feature.properties.CTOTAL && feature.properties.CUT_REG === selectedRegion) {
+        // Obtener el monto de la característica y verificar que no sea "-"
+        const monto = feature.properties.CTOTAL;
+        if (monto !== '-') {
+            // Sumar el monto convertido a número
+            sumaMontoRegion += parseFloat(monto);
+        }
+    }
+});
 
-        // Iterar sobre las características y sumar los montos de los proyectos de la región seleccionada
-        features.forEach(function (feature) {
-            // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
-            if (feature.properties && feature.properties.CTOTAL && feature.properties.CUT_REG === selectedRegion) {
-                // Obtener el monto de la característica y sumarlo
-                sumaMontoRegion += parseFloat(feature.properties.CTOTAL);
-            }
-        });
+// Ahora `sumaMontoRegion` contiene la suma total de los montos válidos
+console.log('Suma total del monto en la región seleccionada:', sumaMontoRegion);
+
 
         // SUMAR EMPLEOS DE LA REGIÓN SELECCIONADA
         let sumaEmpleosRegion = 0;
@@ -3440,10 +3457,10 @@ $(".regionDropdown").change(function () {
     });
 
     // Centra el mapa en la región seleccionada
-    map.flyTo({
-        center: selectedOption.center,
-        zoom: selectedOption.zoom,
-        speed: 2
+    map.fitBounds(selectedOption.bounds, {
+        padding: 20,
+        maxZoom: 10,
+        duration: 2000
     });
 });
 
@@ -3473,7 +3490,10 @@ $(".comunaDropdown").change(function () {
         features.forEach(function (feature) {
             if (feature.properties && feature.properties.JOIN_COUNT && feature.properties.CUT_COM === selectedComuna) {
                 totalProyectosComuna += parseFloat(feature.properties.JOIN_COUNT);
-                sumaMontoComuna += parseFloat(feature.properties.CTOTAL);
+              // Verificar si CTOTAL no es "-"
+        if (feature.properties.CTOTAL && feature.properties.CTOTAL !== "-") {
+            sumaMontoComuna += parseFloat(feature.properties.CTOTAL);
+        }
             }
         });
 
