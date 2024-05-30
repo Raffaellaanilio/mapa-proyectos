@@ -317,7 +317,7 @@ map.on('idle', function () {
 
     // Construye la lista de nombres de proyectos visibles en la vista actual
     const nombreProyectos = features.map(feature => ({
-        nombre: feature.properties.NOMBRE_DE_ || feature.properties.NOMBRE_PRO,
+        nombre: feature.properties.NOMBRE,
         coordenadas: feature.geometry.coordinates
     }));
 
@@ -362,7 +362,7 @@ map.on('idle', function () {
     });
     // Construye la lista de códigos BIP visibles en la vista actual
     const codigoBIP = features.map(feature => ({
-        BIP: feature.properties.CODIGO_BIP || feature.properties.BIP_SINGUI,
+        BIP: feature.properties.COD,
         coordenadas: feature.geometry.coordinates
     }));
 
