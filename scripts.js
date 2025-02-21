@@ -315,7 +315,7 @@ map.on('idle', function () {
     // Obtén las features en la vista actual
     const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
 
-    /*** 🔹 Listado de Nombres de Proyectos ***/
+    // Construye la lista de nombres de proyectos visibles en la vista actual
     const nombreProyectos = features.map(feature => ({
         nombre: feature.properties.nombre,
         coordenadas: feature.geometry.coordinates
@@ -343,7 +343,7 @@ map.on('idle', function () {
     });
 
     // Evitar agregar múltiples eventos 'change'
-    dropdownProyectos.off('change');
+    dropdownProyectos.off('change'); // Elimina cualquier evento 'change' anterior
 
     // Evento que se activa al cambiar la selección en la lista desplegable del proyecto
     dropdownProyectos.on('change', function () {
@@ -353,64 +353,59 @@ map.on('idle', function () {
         );
 
         if (selectedProject) {
+            // Centrar el mapa en la ubicación del proyecto seleccionado
             map.flyTo({
                 center: selectedProject.coordenadas,
-                zoom: 14
+                zoom: 14 // Ajusta el nivel de zoom según sea necesario
             });
         }
     });
-
-    /*** 🔹 Listado de Códigos BIP ***/
+    // Construye la lista de códigos BIP visibles en la vista actual
     const codigoBIP = features
-        .map(feature => ({
-            BIP: feature.properties.cod || "Sin código", // Manejo de valores vacíos
-            coordenadas: feature.geometry.coordinates
-        }))
-        .filter(BIP => BIP.BIP !== "Sin código"); // Filtrar elementos sin código
+    .map(feature => ({
+        BIP: feature.properties.cod || "Sin código", // Manejo de valores vacíos
+        coordenadas: feature.geometry.coordinates
+    }))
+    .filter(BIP => BIP.BIP !== "Sin código"); // Filtrar elementos sin código
 
-    // Llenar el dropdown con los códigos BIP de los proyectos
-    const dropdownCodigoBIP = $(".codigoBIPDropdown");
-    dropdownCodigoBIP.empty(); // Vaciar antes de llenarlo nuevamente
+// Llenar el dropdown con los códigos BIP de los proyectos
+const dropdownCodigoBIP = $(".codigoBIPDropdown");
+dropdownCodigoBIP.empty(); // Vaciar antes de llenarlo nuevamente
 
-    // Agregar la opción predeterminada
+// Agregar la opción predeterminada
+dropdownCodigoBIP.append(
+    $("<option>", {
+        value: "",
+        text: "Código BIP"
+    })
+);
+
+// Agregar los códigos BIP
+codigoBIP.forEach(BIP => {
     dropdownCodigoBIP.append(
         $("<option>", {
-            value: "",
-            text: "Código BIP"
+            value: BIP.BIP,
+            text: BIP.BIP,
         })
     );
+});
 
-    // Agregar los códigos BIP
-    codigoBIP.forEach(BIP => {
-        dropdownCodigoBIP.append(
-            $("<option>", {
-                value: BIP.BIP,
-                text: BIP.BIP,
-            })
-        );
-    });
+// Evitar agregar múltiples eventos 'change'
+dropdownCodigoBIP.off('change');
 
-    // Evitar agregar múltiples eventos 'change'
-    dropdownCodigoBIP.off('change');
+// Evento que se activa al cambiar la selección en la lista desplegable de código BIP
+dropdownCodigoBIP.on('change', function () {
+    const selectedCodigoBIPname = $(this).val();
+    const selectedCodigoBIP = codigoBIP.find(
+        BIP => BIP.BIP === selectedCodigoBIPname
+    );
 
-    // Evento que se activa al cambiar la selección en la lista desplegable de código BIP
-    dropdownCodigoBIP.on('change', function () {
-        const selectedCodigoBIPname = $(this).val();
-        const selectedCodigoBIP = codigoBIP.find(
-            BIP => BIP.BIP === selectedCodigoBIPname
-        );
-
-        if (selectedCodigoBIP) {
-            map.flyTo({
-                center: selectedCodigoBIP.coordenadas,
-                zoom: 14
-            });
-        }
-    });
-
-    /*** 🔹 Depuración ***/
-    console.log("Datos de features:", features);
-    console.log("Códigos BIP extraídos:", codigoBIP);
+    if (selectedCodigoBIP) {
+        map.flyTo({
+            center: selectedCodigoBIP.coordenadas,
+            zoom: 14
+        });
+    }
 });
 
     // Construye la tabla con la información de todas las geometrías en la vista actual
@@ -489,7 +484,7 @@ map.on('idle', function () {
     // Actualiza el contenido de la caja flotante
     document.getElementById('panel').innerHTML = content;
     document.getElementById('bottom-panel').innerHTML = content;
-
+});
 
 
 // Función para centrar el mapa en la feature seleccionada por su ID
