@@ -92,7 +92,7 @@ map.on('load', () => {
     });
 
     // Realizar la solicitud fetch para obtener los datos de la fuente WFS
-    fetch('https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3AproyectosSEGPRESMayo2024&outputFormat=application%2Fjson')
+    fetch('https://geoportal.cepal.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonode%3Aproyectosmayo2024&outputFormat=application%2Fjson')
         .then(response => response.json())
         .then(data => {
             // Agregar la fuente de datos GeoJSON al mapa con los datos obtenidos
