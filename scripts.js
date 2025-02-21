@@ -362,7 +362,7 @@ map.on('idle', function () {
     });
     // Construye la lista de códigos BIP visibles en la vista actual
     const codigoBIP = features.map(feature => ({
-        BIP: feature.properties.COD,
+        BIP: feature.properties.cod,
         coordenadas: feature.geometry.coordinates
     }));
 
@@ -389,8 +389,8 @@ map.on('idle', function () {
         if (BIP.BIP) {
             dropdownCodigoBIP.append(
                 $("<option>", {
-                    value: BIP.BIP,
-                    text: BIP.BIP,
+                    value: BIP.cod,
+                    text: BIP.cod,
                 })
             );
         }
@@ -403,7 +403,7 @@ map.on('idle', function () {
     dropdownCodigoBIP.on('change', function () {
         const selectedCodigoBIPname = $(this).val();
         const selectedCodigoBIP = codigoBIP.find(
-            BIP => BIP.BIP === selectedCodigoBIPname
+            BIP => BIP.cod === selectedCodigoBIPname
         );
 
         if (selectedCodigoBIP) {
@@ -499,7 +499,7 @@ function centrarMapa(featureId) {
     console.log('Feature ID a buscar:', featureId); // Verifica si el ID de la característica se pasa correctamente
 
     var features = map.querySourceFeatures('proyectos-source', {
-        filter: ['==', 'ID', featureId]
+        filter: ['==', 'id', featureId]
     });
     console.log('Características encontradas:', features); // Verifica las características encontradas
 
@@ -998,7 +998,7 @@ console.log('Suma total del monto en la región seleccionada:', sumaMontoRegion)
         // Iterar sobre las características y sumar los empleos de los proyectos de la región seleccionada
         features.forEach(function (feature) {
             // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
-            if (feature.properties && feature.properties.Empleos_Op && feature.properties.Empleos_Co && feature.properties.CUT_REG === selectedRegion) {
+            if (feature.properties && feature.properties.Empleos_Op && feature.properties.Empleos_Co && feature.properties.cut_reg === selectedRegion) {
                 // Obtener la cantidad de empleos de la característica y sumarlos
                 sumaEmpleosRegion += parseFloat(feature.properties.Empleos_Op) + parseFloat(feature.properties.Empleos_Co);
             }
