@@ -111,9 +111,9 @@ map.on('load', () => {
                     'circle-radius': 6, // Radio del círculo
                     'circle-color': [
                         'case',
-                        ['==', ['get', 'DIPRES'], 'Sí'], // Condición para "Sí"
+                        ['==', ['get', 'dipres'], 'Sí'], // Condición para "Sí"
                         '#006FB3', // Color azul para "Sí"
-                        ['==', ['get', 'DIPRES'], 'No'], // Condición para "No"
+                        ['==', ['get', 'dipres'], 'No'], // Condición para "No"
                         '#FE6565', // Color rojo para "No"
                         'gray' // Color por defecto (si no es ni "Sí" ni "No")
                     ],
@@ -130,7 +130,7 @@ map.on('load', () => {
                 layout: {
                     'text-field': [
                         'coalesce', // Utiliza coalesce para obtener el primer valor no nulo
-                        ['get', 'NOMBRE'], // Intenta obtener el valor de 'NOMBRE_PRO'
+                        ['get', 'nombre'], // Intenta obtener el valor de 'NOMBRE_PRO'
                     ],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-radial-offset': 0.5,
@@ -221,9 +221,9 @@ map.on('load', () => {
                 // Iterar sobre las características y sumar los montos
                 features.forEach(function (feature) {
                     // Verificar si la característica tiene la propiedad 'CTOTAL'
-                    if (feature.properties && feature.properties.CTOTAL) {
+                    if (feature.properties && feature.properties.ctotal) {
                         // Obtener el monto de la característica y verificar que no sea "-"
-                        const monto = feature.properties.CTOTAL;
+                        const monto = feature.properties.ctotal;
                         if (monto !== '-') {
                             // Sumar el monto convertido a número
                             sumaMonto += parseFloat(monto);
@@ -317,7 +317,7 @@ map.on('idle', function () {
 
     // Construye la lista de nombres de proyectos visibles en la vista actual
     const nombreProyectos = features.map(feature => ({
-        nombre: feature.properties.NOMBRE,
+        nombre: feature.properties.nombre,
         coordenadas: feature.geometry.coordinates
     }));
 
@@ -419,33 +419,33 @@ map.on('idle', function () {
     let content = `<h6><i>Proyectos <b>(${features.length})</b></h6></i>`;
 
     features.forEach((feature, index) => {
-        const featureId = feature.properties.ID; // Extrae el ID de la característica
-        const codigo = feature.properties.COD;
-        const nombre = feature.properties.NOMBRE;
-        const tipo = feature.properties.PUBLICO_PR;
-        const sector = feature.properties.SECTOR; // Si se encuentra identificado por un Sector
-        const region = feature.properties.REGION;
-        const comuna = feature.properties.COMUNA;
-        const provincia = feature.properties.PROVINCIA;
-        const estado = feature.properties.E_MDSF;
-        const nudo = feature.properties.NUDO_CRIT;
-        const superficie = feature.properties.SUPERFICIE;
-        const formuladora = feature.properties.UNIDAD_FOR;
-        const finalizadora = feature.properties.UNIDAD_FIN;
-        const tecnica = feature.properties.UNIDAD_TE;
-        const costoTotal = feature.properties.CTOTAL;
-        const ejecutado2023 = feature.properties.EJ2023;
-        const ejecutado2024 = feature.properties.EJ2024;
-        const dipres = feature.properties.DIPRES; //Si se encuentra con identificación en DIPRES
-        const sin = feature.properties.SIN; //Si se encuentra en sistema nacional de inversiones
-        const compromisoDCI = feature.properties.COMPR_DCI;
-        const comentarioDCI = feature.properties.COM_DCI;
-        const medidaDCI = feature.properties.MEDI_DCI;
-        const RATE = feature.properties.RATE;
-        const comentarioRATE = feature.properties.COM_RATE;
-        const responsable = feature.properties.RESPONSABLE;
-        const fuente = feature.properties.FUENTE;
-        const fechaCompromiso = feature.properties.COMPROMISO;
+        const featureId = feature.properties.id; // Extrae el ID de la característica
+        const codigo = feature.properties.cod;
+        const nombre = feature.properties.nombre;
+        const tipo = feature.properties.publico_pr;
+        const sector = feature.properties.sector; // Si se encuentra identificado por un Sector
+        const region = feature.properties.region;
+        const comuna = feature.properties.comuna;
+        const provincia = feature.properties.provincia;
+        const estado = feature.properties.e_mdsf;
+        const nudo = feature.properties.nudo_crit;
+        const superficie = feature.properties.superficie;
+        const formuladora = feature.properties.unidad_for;
+        const finalizadora = feature.properties.unidad_fin;
+        const tecnica = feature.properties.unidad_te;
+        const costoTotal = feature.properties.ctotal;
+        const ejecutado2023 = feature.properties.ej2023;
+        const ejecutado2024 = feature.properties.ej2024;
+        const dipres = feature.properties.dipres; //Si se encuentra con identificación en DIPRES
+        const sin = feature.properties.sin; //Si se encuentra en sistema nacional de inversiones
+        const compromisoDCI = feature.properties.compr_dci;
+        const comentarioDCI = feature.properties.com_dci;
+        const medidaDCI = feature.properties.med_dci;
+        const RATE = feature.properties.rate;
+        const comentarioRATE = feature.properties.com_rate;
+        const responsable = feature.properties.responsabl;
+        const fuente = feature.properties.fuente;
+        const fechaCompromiso = feature.properties.compromiso;
 
 
         // Verificar si hay suficiente información para agregar la tarjeta
@@ -967,9 +967,9 @@ $(".regionDropdown").change(function () {
         // Iterar sobre las características y contar los proyectos de la región seleccionada
         features.forEach(function (feature) {
             // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
-            if (feature.properties && feature.properties.JOIN_COUNT && feature.properties.CUT_REG === selectedRegion) {
+            if (feature.properties && feature.properties.join_count && feature.properties.cut_reg === selectedRegion) {
                 // Incrementar el contador de proyectos de la región seleccionada
-                totalProyectosRegion += parseFloat(feature.properties.JOIN_COUNT);
+                totalProyectosRegion += parseFloat(feature.properties.join_count);
             }
         });
 // SUMAR MONTOS DE PROYECTOS DE LA REGIÓN SELECCIONADA
@@ -978,9 +978,9 @@ let sumaMontoRegion = 0;
 // Iterar sobre las características y sumar los montos de los proyectos de la región seleccionada
 features.forEach(function (feature) {
     // Verificar si la característica tiene las propiedades necesarias y si pertenece a la región seleccionada
-    if (feature.properties && feature.properties.CTOTAL && feature.properties.CUT_REG === selectedRegion) {
+    if (feature.properties && feature.properties.ctotal && feature.properties.cut_reg === selectedRegion) {
         // Obtener el monto de la característica y verificar que no sea "-"
-        const monto = feature.properties.CTOTAL;
+        const monto = feature.properties.ctotal;
         if (monto !== '-') {
             // Sumar el monto convertido a número
             sumaMontoRegion += parseFloat(monto);
@@ -1066,11 +1066,11 @@ $(".comunaDropdown").change(function () {
         let sumaMontoComuna = 0;
         const features = map.queryRenderedFeatures({ layers: ['proyectos-layer'] });
         features.forEach(function (feature) {
-            if (feature.properties && feature.properties.JOIN_COUNT && feature.properties.CUT_COM === selectedComuna) {
-                totalProyectosComuna += parseFloat(feature.properties.JOIN_COUNT);
+            if (feature.properties && feature.properties.join_count && feature.properties.cut_com === selectedComuna) {
+                totalProyectosComuna += parseFloat(feature.properties.join_count);
               // Verificar si CTOTAL no es "-"
-        if (feature.properties.CTOTAL && feature.properties.CTOTAL !== "-") {
-            sumaMontoComuna += parseFloat(feature.properties.CTOTAL);
+        if (feature.properties.ctotal && feature.properties.ctotal !== "-") {
+            sumaMontoComuna += parseFloat(feature.properties.ctotal);
         }
             }
         });
